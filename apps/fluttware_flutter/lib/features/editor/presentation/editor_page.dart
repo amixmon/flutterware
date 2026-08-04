@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../build/presentation/runtime_build_sheet.dart';
+import '../../packages/presentation/package_manager_page.dart';
 import '../../projects/data/project_repository.dart';
 import '../../projects/domain/project_file.dart';
 import '../../projects/domain/project_summary.dart';
@@ -155,6 +156,14 @@ class _EditorPageState extends State<EditorPage> {
   }
 
   void _showPlannedTool(String name) {
+    if (name == 'Package manager') {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (context) => PackageManagerPage(project: _project),
+        ),
+      );
+      return;
+    }
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(

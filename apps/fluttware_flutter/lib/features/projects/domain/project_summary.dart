@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
+import 'project_configuration.dart';
+
 @immutable
 class ProjectSummary {
   const ProjectSummary({
@@ -9,6 +11,12 @@ class ProjectSummary {
     required this.packageName,
     required this.modifiedLabel,
     required this.color,
+    this.schemaVersion = 1,
+    this.theme = const ProjectThemeSettings(
+      mode: ProjectThemeMode.system,
+      seedColor: 0xFF168CF3,
+    ),
+    this.dependencies = const [],
     this.iconBytes,
     this.pinned = false,
     this.hasButton = false,
@@ -20,6 +28,9 @@ class ProjectSummary {
   final String packageName;
   final String modifiedLabel;
   final Color color;
+  final int schemaVersion;
+  final ProjectThemeSettings theme;
+  final List<ProjectDependency> dependencies;
   final Uint8List? iconBytes;
   final bool pinned;
   final bool hasButton;
@@ -36,12 +47,22 @@ class ProjectSummary {
         : difference.inHours < 24
         ? 'Edited ${difference.inHours}h ago'
         : 'Edited ${difference.inDays}d ago';
+    final color = (map['color'] as num?)?.toInt() ?? 0xFF168CF3;
     return ProjectSummary(
       id: map['id'] as String,
       name: map['name'] as String,
       packageName: map['packageName'] as String,
       modifiedLabel: modifiedLabel,
-      color: Color((map['color'] as num?)?.toInt() ?? 0xFF168CF3),
+      color: Color(color),
+      schemaVersion: (map['schemaVersion'] as num?)?.toInt() ?? 1,
+      theme: ProjectThemeSettings.fromMap(
+        map['theme'] as Map<Object?, Object?>?,
+        fallbackColor: color,
+      ),
+      dependencies: (map['dependencies'] as List<Object?>? ?? const [])
+          .whereType<Map<Object?, Object?>>()
+          .map(ProjectDependency.fromMap)
+          .toList(growable: false),
       iconBytes: _iconBytes(map['iconBytes']),
       pinned: map['pinned'] as bool? ?? false,
       hasButton: map['hasButton'] as bool? ?? false,
@@ -62,6 +83,9 @@ class ProjectSummary {
       packageName: packageName,
       modifiedLabel: modifiedLabel ?? this.modifiedLabel,
       color: color,
+      schemaVersion: schemaVersion,
+      theme: theme,
+      dependencies: dependencies,
       iconBytes: iconBytes ?? this.iconBytes,
       pinned: pinned ?? this.pinned,
       hasButton: hasButton ?? this.hasButton,
