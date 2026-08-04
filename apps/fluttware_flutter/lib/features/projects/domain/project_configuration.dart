@@ -25,15 +25,19 @@ class ProjectThemeSettings {
     required int fallbackColor,
   }) {
     final modeName = map?['mode'] as String?;
+    final rawFontFamily = (map?['fontFamily'] as String?)?.trim();
     return ProjectThemeSettings(
       mode: ProjectThemeMode.values.firstWhere(
         (value) => value.name == modeName,
         orElse: () => ProjectThemeMode.system,
       ),
       seedColor: (map?['seedColor'] as num?)?.toInt() ?? fallbackColor,
-      fontFamily: (map?['fontFamily'] as String?)?.trim().isNotEmpty == true
-          ? (map?['fontFamily'] as String).trim()
-          : null,
+      fontFamily:
+          rawFontFamily == null ||
+              rawFontFamily.isEmpty ||
+              rawFontFamily == 'null'
+          ? null
+          : rawFontFamily,
       cornerRadius: (map?['cornerRadius'] as num?)?.toDouble() ?? 16,
       cardElevation: (map?['cardElevation'] as num?)?.toDouble() ?? 0,
       inputFilled: map?['inputFilled'] as bool? ?? true,

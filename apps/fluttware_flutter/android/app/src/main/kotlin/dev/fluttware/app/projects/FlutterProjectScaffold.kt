@@ -418,6 +418,7 @@ object FlutterProjectScaffold {
             ?.removePrefix("lib/")
             ?.let { "import 'package:$projectId/$it';" }
             .orEmpty()
+        val bodySource = customUi?.let(::renderCustomWidget) ?: renderNode(body, logic)
         val appBar = page.optJSONObject("appBar")
         val appBarSource = if (appBar?.optBoolean("enabled", false) == true) {
             val title = dartString(appBar.optJSONObject("properties")?.optString("title", page.optString("name")) ?: page.optString("name"))
@@ -477,7 +478,7 @@ object FlutterProjectScaffold {
               @override
               Widget build(BuildContext context) => Scaffold(
                 appBar: $appBarSource,
-                body: ${customUi?.let(::renderCustomWidget) ?: renderNode(body, logic)},
+                body: SizedBox.expand(child: $bodySource),
                 floatingActionButton: $fabSource,
               );
             }
@@ -650,7 +651,7 @@ object FlutterProjectScaffold {
               Widget build(BuildContext context) {
                 return Scaffold(
                   appBar: $appBarSource,
-                  body: $bodySource,
+                  body: SizedBox.expand(child: $bodySource),
                   floatingActionButton: $fabSource,
                 );
               }

@@ -332,6 +332,12 @@ object ProjectStore {
             migrated = true
         }
         val theme = metadata.getJSONObject("theme")
+        if (theme.isNull("fontFamily") || theme.optString("fontFamily") == "null") {
+            if (!theme.isNull("fontFamily")) {
+                theme.put("fontFamily", JSONObject.NULL)
+                migrated = true
+            }
+        }
         if (!theme.has("cornerRadius")) {
             theme.put("cornerRadius", 16.0)
             migrated = true
@@ -552,7 +558,8 @@ object ProjectStore {
             mapOf(
                 "mode" to theme.optString("mode", "system"),
                 "seedColor" to theme.optLong("seedColor", json.optLong("color", 0xFF168CF3L)),
-                "fontFamily" to theme.optString("fontFamily").takeIf { it.isNotBlank() },
+                "fontFamily" to theme.optString("fontFamily")
+                    .takeIf { !theme.isNull("fontFamily") && it.isNotBlank() && it != "null" },
                 "cornerRadius" to theme.optDouble("cornerRadius", 16.0),
                 "cardElevation" to theme.optDouble("cardElevation", 0.0),
                 "inputFilled" to theme.optBoolean("inputFilled", true),

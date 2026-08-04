@@ -67,6 +67,10 @@ public final class ThemeStudioInstrumentationTest {
             assertTrue(theme, theme.contains("elevation: 3.0"));
             assertTrue(theme, theme.contains("filled: false"));
 
+            String page = read(new File(
+                    project, "lib/features/home/presentation/pages/home_page.dart"));
+            assertTrue(page, page.contains("body: SizedBox.expand(child: Column("));
+
             RuntimeService.Companion.start(
                     context, id, "Theme test", "dev.flutterware." + id);
             Map<String, ?> buildState = waitForBuild();
