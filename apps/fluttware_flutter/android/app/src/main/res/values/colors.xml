@@ -4,5 +4,5 @@
     <color name="fluttware_surface_container">#EBF1F8</color>
     <color name="flutterware_icon_background">#F4FAFF</color>
     <color name="flutterware_brand_primary">#168CF3</color>
-    <color name="flutterware_splash_background">#F8FAFF</color>
+    <color name="flutterware_splash_background">@color/fluttware_surface</color>
 </resources>
