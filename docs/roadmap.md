@@ -12,7 +12,7 @@ The next work turns that proof into a maintainable product.
 - [x] Add Android integration coverage for toolchain installation and
   executable-path resolution.
 - [ ] Add integration coverage for cancellation and a complete debug build.
-- Re-run the physical-device evidence suite on supported Android versions.
+- [x] Re-run the physical-device evidence suite on ARM64 Android 16.
 
 ## P1 — production build modes
 

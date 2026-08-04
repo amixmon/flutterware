@@ -113,10 +113,10 @@ public final class DartSdkInstaller {
     }
 
     private static boolean isComplete(File sdkRoot) {
-        return new File(sdkRoot, "bin/dart").isFile()
-                && new File(sdkRoot, "bin/dartvm").isFile()
-                && new File(sdkRoot, "bin/dartaotruntime").isFile()
-                && new File(sdkRoot, "bin/snapshots/dartdev_aot.dart.snapshot").isFile()
+        // Launcher links can dangle after Android moves nativeLibraryDir for
+        // an APK update. Validate only writable SDK data here; install()
+        // repairs every packaged executable link before returning.
+        return new File(sdkRoot, "bin/snapshots/dartdev_aot.dart.snapshot").isFile()
                 && new File(sdkRoot, "bin/snapshots/gen_kernel_aot.dart.snapshot").isFile()
                 && new File(sdkRoot, "lib/_internal/vm_platform_product.dill").isFile()
                 && new File(sdkRoot, "version").isFile();
@@ -148,10 +148,10 @@ public final class DartSdkInstaller {
     }
 
     private static void deleteRecursively(File file) throws Exception {
-        if (!file.exists()) {
+        if (!file.exists() && !Files.isSymbolicLink(file.toPath())) {
             return;
         }
-        if (file.isDirectory()) {
+        if (!Files.isSymbolicLink(file.toPath()) && file.isDirectory()) {
             File[] children = file.listFiles();
             if (children == null) {
                 throw new IllegalStateException("Could not list " + file);

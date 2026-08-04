@@ -134,7 +134,6 @@ public final class AndroidSdkInstaller {
                         sdkRoot,
                         "platforms/android-36/core-for-system-modules.jar").isFile()
                 && new File(sdkRoot, "platforms/android-36/source.properties").isFile()
-                && new File(buildTools, "aapt2").isFile()
                 && new File(buildTools, "lib/d8.jar").isFile()
                 && new File(buildTools, "lib/apksigner.jar").isFile()
                 && new File(buildTools, "lib64/libc++_shared.so").isFile()

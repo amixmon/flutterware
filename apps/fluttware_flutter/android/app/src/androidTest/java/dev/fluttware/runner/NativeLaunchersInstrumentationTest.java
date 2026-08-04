@@ -1,6 +1,7 @@
 package dev.fluttware.runner;
 
 import android.content.Context;
+import android.system.Os;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -66,6 +67,11 @@ public final class NativeLaunchersInstrumentationTest {
         String output = finish(process, 30);
         assertTrue(output, output.contains("Dart SDK version: 3.12.2"));
         assertTrue(output, output.contains("android_arm64"));
+
+        replaceWithStaleLink(installed.dart());
+        DartSdkInstaller.Result repaired = DartSdkInstaller.install(context);
+        assertTrue("Complete SDK data should be reused after an APK update", repaired.reused);
+        assertTrue(launchers.isPackagedTarget(repaired.dart()));
     }
 
     @Test
@@ -74,6 +80,15 @@ public final class NativeLaunchersInstrumentationTest {
         AndroidSdkInstaller.Result androidSdk = AndroidSdkInstaller.install(context);
         assertWithinFilesDirectory(jdk.javaHome);
         assertWithinFilesDirectory(androidSdk.sdkRoot);
+        assertTrue(launchers.isPackagedTarget(jdk.java()));
+        assertTrue(launchers.isPackagedTarget(androidSdk.aapt2()));
+
+        replaceWithStaleLink(jdk.java());
+        replaceWithStaleLink(androidSdk.aapt2());
+        jdk = JdkInstaller.install(context);
+        androidSdk = AndroidSdkInstaller.install(context);
+        assertTrue("Complete JDK data should be reused after an APK update", jdk.reused);
+        assertTrue("Complete Android SDK data should be reused after an APK update", androidSdk.reused);
         assertTrue(launchers.isPackagedTarget(jdk.java()));
         assertTrue(launchers.isPackagedTarget(androidSdk.aapt2()));
 
@@ -155,6 +170,14 @@ public final class NativeLaunchersInstrumentationTest {
     private void assertWithinFilesDirectory(File path) throws Exception {
         String filesRoot = context.getFilesDir().getCanonicalPath() + File.separator;
         assertTrue(path.toString(), path.getCanonicalPath().startsWith(filesRoot));
+    }
+
+    private static void replaceWithStaleLink(File logicalPath) throws Exception {
+        Files.delete(logicalPath.toPath());
+        Os.symlink(
+                "/data/app/obsolete-flutterware/lib/arm64/" + logicalPath.getName(),
+                logicalPath.getAbsolutePath());
+        assertTrue(Files.isSymbolicLink(logicalPath.toPath()));
     }
 
     private static void deleteRecursively(File file) {

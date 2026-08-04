@@ -124,9 +124,10 @@ public final class JdkInstaller {
     }
 
     private static boolean isComplete(File javaHome) {
-        return new File(javaHome, "bin/java").isFile()
-                && new File(javaHome, "bin/javac").isFile()
-                && new File(javaHome, "release").isFile()
+        // APK updates invalidate absolute nativeLibraryDir symlink targets.
+        // The runtime image remains valid and install() relinks launchers to
+        // the current package location before exposing the result.
+        return new File(javaHome, "release").isFile()
                 && new File(javaHome, "lib/modules").isFile()
                 && new File(javaHome, "lib/server/libjvm.so").isFile()
                 && new File(javaHome, "lib/libjava.so").isFile()
