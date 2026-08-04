@@ -19,7 +19,7 @@ The next work turns that proof into a maintainable product.
 - [x] Version project metadata so editor, theme, and dependency migrations are safe.
 - [ ] Expand the catalog to broad Material 3 component coverage with preview,
   properties, events, persistence, and generated-code parity.
-- [ ] Add a project Theme Studio for light, dark, and system modes, seeded color
+- [x] Add a project Theme Studio for light, dark, and system modes, seeded color
   schemes, typography, shapes, and component themes.
 - [ ] Add representative generated-app fixtures for forms, navigation, responsive
   dashboards, and data-driven screens.

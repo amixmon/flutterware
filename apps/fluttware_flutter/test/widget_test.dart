@@ -9,6 +9,8 @@ import 'package:flutterware/features/projects/presentation/new_project_page.dart
 import 'package:flutterware/features/projects/domain/demo_project_template.dart';
 import 'package:flutterware/features/projects/domain/project_summary.dart';
 import 'package:flutterware/features/projects/domain/project_configuration.dart';
+import 'package:flutterware/features/themes/domain/project_theme_builder.dart';
+import 'package:flutterware/features/themes/presentation/theme_studio_page.dart';
 import 'package:flutterware/features/editor/presentation/visual_editor.dart';
 import 'package:flutterware/features/editor/presentation/logic_editor.dart';
 import 'package:flutterware/features/editor/presentation/editor_page.dart';
@@ -20,15 +22,22 @@ import 'package:flutterware/ui/widgets/app_code_editor.dart';
 import 'package:flutterware/ui/widgets/app_text_field.dart';
 
 void main() {
-  test('project schema v3 preserves theme and package compatibility', () {
+  test('project schema v4 preserves theme and package compatibility', () {
     final project = ProjectSummary.fromMap({
-      'schemaVersion': 3,
+      'schemaVersion': 4,
       'id': 'sample',
       'name': 'Sample',
       'packageName': 'com.example.sample',
       'updatedAt': 0,
       'color': 0xFF6750A4,
-      'theme': {'mode': 'dark', 'seedColor': 0xFF6750A4, 'fontFamily': 'Inter'},
+      'theme': {
+        'mode': 'dark',
+        'seedColor': 0xFF6750A4,
+        'fontFamily': 'Inter',
+        'cornerRadius': 24.0,
+        'cardElevation': 3.0,
+        'inputFilled': false,
+      },
       'dependencies': [
         {
           'name': 'intl',
@@ -39,14 +48,45 @@ void main() {
       ],
     });
 
-    expect(project.schemaVersion, 3);
+    expect(project.schemaVersion, 4);
     expect(project.theme.mode, ProjectThemeMode.dark);
     expect(project.theme.seedColor, 0xFF6750A4);
     expect(project.theme.fontFamily, 'Inter');
+    expect(project.theme.cornerRadius, 24);
+    expect(project.theme.cardElevation, 3);
+    expect(project.theme.inputFilled, isFalse);
     expect(project.dependencies.single.name, 'intl');
     expect(
       project.dependencies.single.compatibility,
       PackageCompatibility.pureDart,
+    );
+  });
+
+  test('project theme builder applies Material 3 settings in both modes', () {
+    const settings = ProjectThemeSettings(
+      mode: ProjectThemeMode.dark,
+      seedColor: 0xFF6750A4,
+      fontFamily: 'Roboto',
+      cornerRadius: 24,
+      cardElevation: 3,
+      inputFilled: false,
+    );
+
+    final light = ProjectThemeBuilder.build(settings, Brightness.light);
+    final dark = ProjectThemeBuilder.build(settings, Brightness.dark);
+
+    expect(light.useMaterial3, isTrue);
+    expect(light.brightness, Brightness.light);
+    expect(dark.brightness, Brightness.dark);
+    expect(light.colorScheme.primary, isNot(dark.colorScheme.primary));
+    expect(light.textTheme.bodyMedium?.fontFamily, 'Roboto');
+    expect(light.cardTheme.elevation, 3);
+    expect(light.inputDecorationTheme.filled, isFalse);
+    final shape = light.cardTheme.shape! as RoundedRectangleBorder;
+    expect(shape.borderRadius, BorderRadius.circular(24));
+    expect(
+      ProjectThemeBuilder.brightnessFor(settings, Brightness.light),
+      Brightness.dark,
     );
   });
 
@@ -666,6 +706,7 @@ void main() {
 
   testWidgets('project tools open from the right drawer', (tester) async {
     const channel = MethodChannel('com.flutterware.app/runtime');
+    Map<Object?, Object?>? savedTheme;
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
           if (call.method == 'readProjectDesign') {
@@ -677,6 +718,23 @@ void main() {
           if (call.method == 'listCustomWidgets' ||
               call.method == 'listProjectFiles') {
             return <Object?>[];
+          }
+          if (call.method == 'updateProjectTheme') {
+            final arguments = Map<Object?, Object?>.from(
+              call.arguments! as Map<Object?, Object?>,
+            );
+            savedTheme = arguments;
+            final theme = Map<Object?, Object?>.from(arguments)..remove('id');
+            return <Object?, Object?>{
+              'schemaVersion': 4,
+              'id': 'sample_app',
+              'name': 'Sample App',
+              'packageName': 'com.example.sample',
+              'updatedAt': 0,
+              'color': arguments['seedColor'],
+              'theme': theme,
+              'dependencies': <Object?>[],
+            };
           }
           return null;
         });
@@ -699,11 +757,27 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Project tools'), findsOneWidget);
+    expect(find.text('Theme Studio'), findsOneWidget);
     expect(find.text('Package manager'), findsOneWidget);
     expect(find.text('Image manager'), findsOneWidget);
     expect(find.text('Font manager'), findsOneWidget);
     expect(find.text('Sound manager'), findsOneWidget);
     expect(find.text('Planned'), findsWidgets);
+
+    await tester.tap(find.text('Theme Studio'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ThemeStudioPage), findsOneWidget);
+    expect(find.text('Live preview'), findsOneWidget);
+    await tester.tap(find.text('Dark'));
+    await tester.drag(find.byType(ListView).last, const Offset(0, -1600));
+    await tester.pumpAndSettle();
+    expect(find.text('Save project theme'), findsOneWidget);
+    await tester.tap(find.text('Save project theme'));
+    await tester.pumpAndSettle();
+    expect(savedTheme?['mode'], 'dark');
+    expect(find.byType(EditorPage), findsOneWidget);
+    await tester.tap(find.byTooltip('Project tools'));
+    await tester.pumpAndSettle();
     await tester.drag(find.byType(ListView).last, const Offset(0, -300));
     await tester.pumpAndSettle();
     expect(find.text('Permission manager'), findsOneWidget);

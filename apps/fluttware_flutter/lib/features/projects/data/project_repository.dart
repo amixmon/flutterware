@@ -81,6 +81,20 @@ class ProjectRepository {
         .toList(growable: false);
   }
 
+  Future<ProjectSummary> updateTheme({
+    required String id,
+    required ProjectThemeSettings theme,
+  }) async {
+    final value = await _channel.invokeMapMethod<Object?, Object?>(
+      'updateProjectTheme',
+      {'id': id, ...theme.toMap()},
+    );
+    if (value == null) {
+      throw StateError('Native theme update returned no data');
+    }
+    return ProjectSummary.fromMap(value);
+  }
+
   Future<List<ProjectDependency>> upsertDependency({
     required String id,
     required ProjectDependency dependency,

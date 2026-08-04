@@ -9,6 +9,7 @@ import '../../packages/presentation/package_manager_page.dart';
 import '../../projects/data/project_repository.dart';
 import '../../projects/domain/project_file.dart';
 import '../../projects/domain/project_summary.dart';
+import '../../themes/presentation/theme_studio_page.dart';
 import '../domain/editor_models.dart';
 import '../domain/logic_models.dart';
 import '../../../ui/widgets/app_button.dart';
@@ -155,9 +156,18 @@ class _EditorPageState extends State<EditorPage> {
     );
   }
 
-  void _showPlannedTool(String name) {
+  Future<void> _showPlannedTool(String name) async {
+    if (name == 'Theme Studio') {
+      final updated = await Navigator.of(context).push<ProjectSummary>(
+        MaterialPageRoute<ProjectSummary>(
+          builder: (context) => ThemeStudioPage(project: _project),
+        ),
+      );
+      if (updated != null && mounted) setState(() => _project = updated);
+      return;
+    }
     if (name == 'Package manager') {
-      Navigator.of(context).push(
+      await Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (context) => PackageManagerPage(project: _project),
         ),
@@ -180,9 +190,16 @@ class _ProjectToolsDrawer extends StatelessWidget {
 
   static const _managers = <_ProjectToolItem>[
     _ProjectToolItem(
+      title: 'Theme Studio',
+      description: 'Colors, type, shapes, and component styles',
+      icon: Icons.palette_outlined,
+      available: true,
+    ),
+    _ProjectToolItem(
       title: 'Package manager',
       description: 'Add and configure packages for this project',
       icon: Icons.inventory_2_outlined,
+      available: true,
     ),
     _ProjectToolItem(
       title: 'Image manager',
@@ -277,7 +294,7 @@ class _ProjectToolsDrawer extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'More project capabilities',
+                      'Project capabilities',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),
@@ -293,7 +310,7 @@ class _ProjectToolsDrawer extends StatelessWidget {
                       shape: const StadiumBorder(),
                     ),
                     child: Text(
-                      'Planned',
+                      '${_managers.where((item) => item.available).length} ready',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
                         color: colors.onSecondaryContainer,
                       ),
@@ -424,6 +441,24 @@ class _ProjectToolTile extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: ShapeDecoration(
+                  color: item.available
+                      ? colors.tertiaryContainer
+                      : colors.surfaceContainerHighest,
+                  shape: const StadiumBorder(),
+                ),
+                child: Text(
+                  item.available ? 'Ready' : 'Planned',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: item.available
+                        ? colors.onTertiaryContainer
+                        : colors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 2),
               Icon(
                 Icons.chevron_right_rounded,
                 size: 20,
@@ -442,11 +477,13 @@ class _ProjectToolItem {
     required this.title,
     required this.description,
     required this.icon,
+    this.available = false,
   });
 
   final String title;
   final String description;
   final IconData icon;
+  final bool available;
 }
 
 class _EditorEventTarget {
