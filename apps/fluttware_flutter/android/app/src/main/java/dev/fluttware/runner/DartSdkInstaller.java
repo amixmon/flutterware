@@ -1,7 +1,6 @@
 package dev.fluttware.runner;
 
 import android.content.Context;
-import android.system.Os;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +41,7 @@ public final class DartSdkInstaller {
 
     public static Result install(Context context) throws Exception {
         long started = System.currentTimeMillis();
+        NativeLaunchers launchers = NativeLaunchers.from(context);
         File toolchains = new File(context.getFilesDir(), "toolchains");
         File destination = new File(toolchains, INSTALL_NAME);
         File sdkRoot = new File(destination, "dart-sdk");
@@ -51,7 +51,7 @@ public final class DartSdkInstaller {
         if (isComplete(sdkRoot)
                 && marker.isFile()
                 && archiveSha256.equals(readText(marker).trim())) {
-            chmodExecutables(sdkRoot);
+            launchers.linkDartSdk(sdkRoot);
             return new Result(
                     sdkRoot, archiveSha256, true, System.currentTimeMillis() - started);
         }
@@ -101,31 +101,25 @@ public final class DartSdkInstaller {
             throw new IllegalStateException("Extracted Dart SDK is incomplete: " + temporarySdkRoot);
         }
         writeText(new File(temporary, ".archive.sha256"), archiveSha256 + "\n");
-        chmodExecutables(temporarySdkRoot);
+        launchers.linkDartSdk(temporarySdkRoot);
 
         deleteRecursively(destination);
         if (!temporary.renameTo(destination)) {
             throw new IllegalStateException("Could not activate Dart SDK at " + destination);
         }
-        chmodExecutables(sdkRoot);
+        launchers.linkDartSdk(sdkRoot);
         return new Result(
                 sdkRoot, archiveSha256, false, System.currentTimeMillis() - started);
     }
 
     private static boolean isComplete(File sdkRoot) {
-        return new File(sdkRoot, "bin/dart").isFile()
-                && new File(sdkRoot, "bin/dartvm").isFile()
-                && new File(sdkRoot, "bin/dartaotruntime").isFile()
-                && new File(sdkRoot, "bin/snapshots/dartdev_aot.dart.snapshot").isFile()
+        // Launcher links can dangle after Android moves nativeLibraryDir for
+        // an APK update. Validate only writable SDK data here; install()
+        // repairs every packaged executable link before returning.
+        return new File(sdkRoot, "bin/snapshots/dartdev_aot.dart.snapshot").isFile()
                 && new File(sdkRoot, "bin/snapshots/gen_kernel_aot.dart.snapshot").isFile()
                 && new File(sdkRoot, "lib/_internal/vm_platform_product.dill").isFile()
                 && new File(sdkRoot, "version").isFile();
-    }
-
-    private static void chmodExecutables(File sdkRoot) throws Exception {
-        Os.chmod(new File(sdkRoot, "bin/dart").getAbsolutePath(), 0700);
-        Os.chmod(new File(sdkRoot, "bin/dartvm").getAbsolutePath(), 0700);
-        Os.chmod(new File(sdkRoot, "bin/dartaotruntime").getAbsolutePath(), 0700);
     }
 
     private static String sha256(InputStream input) throws Exception {
@@ -154,10 +148,10 @@ public final class DartSdkInstaller {
     }
 
     private static void deleteRecursively(File file) throws Exception {
-        if (!file.exists()) {
+        if (!file.exists() && !Files.isSymbolicLink(file.toPath())) {
             return;
         }
-        if (file.isDirectory()) {
+        if (!Files.isSymbolicLink(file.toPath()) && file.isDirectory()) {
             File[] children = file.listFiles();
             if (children == null) {
                 throw new IllegalStateException("Could not list " + file);

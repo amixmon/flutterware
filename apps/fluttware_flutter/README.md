@@ -42,6 +42,8 @@ lib/
 android/app/src/main/
 ├── kotlin/dev/fluttware/app/    # Runtime service, process/build and install code
 ├── java/dev/fluttware/runner/   # Toolchain installers reused from the native POC
+├── cpp/                         # OpenJDK executable-path compatibility shim
+├── ../androidTest/              # On-device launcher/toolchain integration tests
 ├── assets/                      # ARM64 toolchains and direct-build scripts
 └── res/                         # Launch and system-bar colors for light/dark mode
 ```
@@ -81,7 +83,34 @@ card styling. App-wide visual changes belong in `AppTheme`; spacing/radius
 changes belong in `app_tokens.dart`.
 
 The generated application is currently an ARM64 Flutter debug APK and keeps the
-Flutter DEBUG banner visible. The host temporarily targets Android API 28 so
-Android permits executing compiler launchers from writable internal storage.
-Moving those launchers to `nativeLibraryDir` is required before adopting a
-modern production target SDK.
+Flutter DEBUG banner visible. The host targets Android API 36. Dart, OpenJDK,
+and AAPT2 executable entry points are packaged as extracted APK native libraries
+and launched from `applicationInfo.nativeLibraryDir`; their SDK images,
+snapshots, platform files, projects, and caches remain writable under
+`filesDir`. Logical SDK executable paths are symlinks to those immutable native
+library targets so existing Flutter and Android build commands keep their normal
+directory layout.
+
+OpenJDK derives its runtime image from the executable path. A narrowly scoped
+native compatibility shim reports the corresponding `JAVA_HOME/bin` path for
+the packaged Java launchers while forwarding unrelated path lookups unchanged.
+The runtime verifies every logical launcher target before starting a build.
+
+Build the host and its device test with:
+
+```bash
+cd apps/fluttware_flutter/android
+./gradlew :app:assembleDebug :app:assembleDebugAndroidTest
+```
+
+With an ARM64 device connected, install and run the native-launcher integration
+suite with `./gradlew :app:connectedDebugAndroidTest`. The suite installs the
+toolchain data under `filesDir`, verifies all logical executable paths resolve
+into `nativeLibraryDir`, and executes the packaged probe, Dart, Java, and AAPT2.
+
+The target-SDK-36 pipeline was validated on a Samsung SM-A356E running Android
+16. All four native-launcher integration tests passed, including relinking
+stale executable paths after an APK update. A clean on-device build completed
+in 46.64 seconds, produced a signed 40.65 MB Flutter debug APK, installed it,
+and launched the generated application. See the
+[device log](../../evidence/device/06_native_library_launchers_target36.log).

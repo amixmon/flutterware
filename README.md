@@ -2,8 +2,8 @@
 
 > [!WARNING]
 > Flutterware is an experimental prototype, not a production-ready IDE. The
-> current host app temporarily targets Android API 28 to run compiler launchers
-> from writable storage. Do not use its generated debug signing key for
+> host app packages compiler launchers as APK native libraries and currently
+> targets Android API 36. Do not use its generated debug signing key for
 > production applications.
 
 Verdict: **technically feasible on ARM64 Android, but not with the unmodified

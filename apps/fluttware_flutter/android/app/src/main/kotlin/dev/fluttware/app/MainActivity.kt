@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.webkit.MimeTypeMap
+import androidx.core.content.ContextCompat
 import com.flutterware.app.runtime.ApkInstallCoordinator
 import com.flutterware.app.projects.ProjectStore
 import com.flutterware.app.projects.ProjectFileStore
@@ -71,11 +72,12 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val filter = IntentFilter(ApkInstallCoordinator.ACTION_INSTALL_STATUS)
-        if (Build.VERSION.SDK_INT >= 33) {
-            registerReceiver(installReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(installReceiver, filter)
-        }
+        ContextCompat.registerReceiver(
+            this,
+            installReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     override fun onResume() {
@@ -465,12 +467,19 @@ class MainActivity : FlutterActivity() {
 
     private fun launchGeneratedApp(generatedPackage: String) {
         val launch = packageManager.getLaunchIntentForPackage(generatedPackage)
-        if (launch == null) {
-            RuntimeStateStore.log("Installed package has no launch activity: $generatedPackage")
-            return
+            ?: Intent(Intent.ACTION_MAIN).apply {
+                setClassName(generatedPackage, GENERATED_MAIN_ACTIVITY)
+                addCategory(Intent.CATEGORY_LAUNCHER)
+            }
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+        try {
+            startActivity(launch)
+            RuntimeStateStore.log("Launched installed package: $generatedPackage")
+        } catch (error: Throwable) {
+            val detail = error.message ?: error.javaClass.simpleName
+            RuntimeStateStore.installation("Installed, but launch failed: $detail")
+            RuntimeStateStore.log("Could not launch installed package $generatedPackage: $detail")
         }
-        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(launch)
     }
 
     override fun onDestroy() {
@@ -483,6 +492,8 @@ class MainActivity : FlutterActivity() {
     companion object {
         private const val METHOD_CHANNEL = "com.flutterware.app/runtime"
         private const val EVENT_CHANNEL = "com.flutterware.app/runtime_events"
+        private const val GENERATED_MAIN_ACTIVITY =
+            "com.example.fluttware_reference.MainActivity"
         private const val ICON_PICKER_REQUEST = 4801
         private const val ASSET_PICKER_REQUEST = 4802
         private const val MAX_ICON_BYTES = 8 * 1024 * 1024

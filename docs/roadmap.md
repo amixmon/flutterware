@@ -6,12 +6,13 @@ The next work turns that proof into a maintainable product.
 
 ## P0 — modern Android execution model
 
-- Package executable launchers in the host APK's native-library directory.
-- Keep SDK data, projects, and caches in writable app-private storage.
-- Raise the host application's target SDK from the temporary API 28 setting.
-- Add Android integration coverage for toolchain installation, executable path
-  resolution, cancellation, and a complete debug build.
-- Re-run the physical-device evidence suite on supported Android versions.
+- [x] Package executable launchers in the host APK's native-library directory.
+- [x] Keep SDK data, projects, and caches in writable app-private storage.
+- [x] Raise the host application target to Android API 36.
+- [x] Add Android integration coverage for toolchain installation and
+  executable-path resolution.
+- [ ] Add integration coverage for cancellation and a complete debug build.
+- [x] Re-run the physical-device evidence suite on ARM64 Android 16.
 
 ## P1 — production build modes
 

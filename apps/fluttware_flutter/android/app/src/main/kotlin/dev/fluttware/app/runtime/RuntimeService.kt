@@ -10,7 +10,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
-import android.system.Os
 import androidx.core.content.ContextCompat
 import com.flutterware.app.MainActivity
 import com.flutterware.app.R
@@ -20,6 +19,7 @@ import dev.fluttware.runner.DartSdkInstaller
 import dev.fluttware.runner.FlutterDebugInstaller
 import dev.fluttware.runner.FlutterToolInstaller
 import dev.fluttware.runner.JdkInstaller
+import dev.fluttware.runner.NativeLaunchers
 import java.io.File
 import java.io.FileOutputStream
 import java.io.BufferedWriter
@@ -96,6 +96,22 @@ class RuntimeService : Service() {
             logWriter = logFile!!.bufferedWriter()
             log("Flutterware local build started")
             log("Project: $projectName ($projectId)")
+            processExecutor = ProcessExecutor(::log)
+
+            val launchers = NativeLaunchers.from(this)
+            log("Native launchers: ${launchers.directory().absolutePath}")
+            phase("preparing", "Verifying packaged launcher", 0.03)
+            runChecked(
+                listOf(launchers.probe().absolutePath, "native-library-dir"),
+                runtimeDir,
+                mapOf(
+                    "HOME" to filesDir.absolutePath,
+                    "TMPDIR" to cacheDir.absolutePath,
+                    "PATH" to "${launchers.directory().absolutePath}:/system/bin",
+                    "FLUTTWARE_PROBE_TOKEN" to "native-library-dir",
+                ),
+                "Packaged launcher probe",
+            )
 
             phase("preparing", "Installing Dart SDK", 0.08)
             val dart = DartSdkInstaller.install(this)
@@ -121,8 +137,8 @@ class RuntimeService : Service() {
             val project = File(projectsRoot, projectId)
             requireInside(projectsRoot, project)
             ProjectStore.ensureScaffold(this, projectId)
-            val baseEnvironment = environment(dart, flutter, jdk, androidSdk)
-            processExecutor = ProcessExecutor(::log)
+            verifyLauncherLinks(launchers, dart, jdk, androidSdk)
+            val baseEnvironment = environment(dart, flutter, jdk, androidSdk, launchers)
 
             phase("creating", "Preparing project sources", 0.60)
             log("Using project sources at ${project.absolutePath}")
@@ -219,6 +235,7 @@ class RuntimeService : Service() {
         flutter: FlutterToolInstaller.Result,
         jdk: JdkInstaller.Result,
         androidSdk: AndroidSdkInstaller.Result,
+        launchers: NativeLaunchers,
     ): Map<String, String> {
         val pubCache = File(filesDir, "pub-cache").apply { mkdirs() }
         val temporary = File(cacheDir, "build-tmp").apply { mkdirs() }
@@ -232,16 +249,46 @@ class RuntimeService : Service() {
             "FLUTTER_ROOT" to flutter.flutterRoot.absolutePath,
             "FLUTTER_ALREADY_LOCKED" to "true",
             "CI" to "true",
+            "FLUTTERWARE_JAVA_HOME" to jdk.javaHome.absolutePath,
+            "LD_PRELOAD" to launchers.execNameShim().absolutePath,
+            "JAVA_TOOL_OPTIONS" to "-Djdk.lang.Process.launchMechanism=FORK",
             "LD_LIBRARY_PATH" to "${androidSdk.libraryPath()}:${jdk.libraryPath()}",
             "PATH" to listOf(
                 File(jdk.javaHome, "bin").absolutePath,
                 flutter.compatibilityBin.absolutePath,
-                File(flutter.flutterRoot, "bin").absolutePath,
                 File(dart.sdkRoot, "bin").absolutePath,
+                launchers.directory().absolutePath,
                 "/system/bin",
                 "/system/xbin",
             ).joinToString(":"),
         )
+    }
+
+    private fun verifyLauncherLinks(
+        launchers: NativeLaunchers,
+        dart: DartSdkInstaller.Result,
+        jdk: JdkInstaller.Result,
+        androidSdk: AndroidSdkInstaller.Result,
+    ) {
+        val logicalLaunchers = listOf(
+            dart.dart(),
+            File(dart.sdkRoot, "bin/dartvm"),
+            File(dart.sdkRoot, "bin/dartaotruntime"),
+            jdk.java(),
+            File(jdk.javaHome, "bin/javac"),
+            File(jdk.javaHome, "bin/jar"),
+            File(jdk.javaHome, "bin/jarsigner"),
+            File(jdk.javaHome, "bin/keytool"),
+            File(jdk.javaHome, "lib/jexec"),
+            File(jdk.javaHome, "lib/jspawnhelper"),
+            androidSdk.aapt2(),
+        )
+        for (logical in logicalLaunchers) {
+            check(launchers.isPackagedTarget(logical)) {
+                "Executable is not backed by nativeLibraryDir: ${logical.absolutePath}"
+            }
+        }
+        log("All executable entry points resolve into nativeLibraryDir")
     }
 
     private fun runChecked(
@@ -261,8 +308,6 @@ class RuntimeService : Service() {
         val packageApk = File(directory, "package-flutter-debug.sh")
         copyAsset("direct-build/flutter-kernel.sh", kernel)
         copyAsset("direct-build/package-flutter-debug.sh", packageApk)
-        Os.chmod(kernel.absolutePath, 0x1C0)
-        Os.chmod(packageApk.absolutePath, 0x1C0)
         return kernel to packageApk
     }
 

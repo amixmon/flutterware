@@ -1,0 +1,56 @@
+Flutterware target-SDK-36 native-library launcher validation
+Date: 2026-08-04
+Device: Samsung SM-A356E
+Android API: 36 (Android 16)
+ABI: arm64-v8a
+Host package: com.flutterware.app
+Generated package: com.example.test
+
+Android integration suite
+-------------------------
+Command:
+  adb shell am instrument -w -r \
+    com.flutterware.app.test/androidx.test.runner.AndroidJUnitRunner
+
+Result after an in-place host APK update:
+  Tests run: 4
+  Failures: 0
+  Time: 3.806 seconds
+  OK (4 tests)
+
+Coverage:
+  - probe execution from applicationInfo.nativeLibraryDir
+  - Dart SDK data installation under filesDir and Dart execution
+  - OpenJDK data installation under filesDir and Java execution
+  - Android SDK data installation under filesDir and AAPT2 execution
+  - every logical executable path resolves to nativeLibraryDir
+  - stale Dart, Java, and AAPT2 links are repaired after APK relocation
+
+Complete generated-APK build
+----------------------------
+Native launcher probe: exit 0
+Dart install: 2214 ms
+Flutter tools install: 2273 ms
+Flutter debug engine install: 2068 ms
+OpenJDK install: 4122 ms
+Android SDK install: 7966 ms
+Pub get: 3831 ms
+Dart kernel compile: 11027 ms
+APK packaging/signing: 13037 ms
+Total build: 46640 ms
+
+Output:
+  /data/user/0/com.flutterware.app/files/projects/test/build/app-debug.apk
+  Size: 40650474 bytes
+  Package: com.example.test
+  Signature verification: v2=true, v3=true
+
+Launch validation
+-----------------
+Android resolved and launched:
+  com.example.test/com.example.fluttware_reference.MainActivity
+
+The first install exposed Android package-visibility filtering in the host's
+getLaunchIntentForPackage call. The final build adds a MAIN/LAUNCHER visibility
+query and an explicit generated-activity fallback. The operator then repeated
+the application-controlled install flow and confirmed automatic launch works.
