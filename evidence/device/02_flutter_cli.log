@@ -1,0 +1,156 @@
+Fluttware bundled Flutter CLI proof
+Date: 2026-08-03
+
+DEVICE
+model=SM-A356E
+primary_abi=arm64-v8a
+android_release=16
+android_api=36
+kernel=5.15.189-android13-3-33470412
+
+APK
+package=dev.fluttware.runner
+versionCode=4
+versionName=0.4-flutter-cli-probe
+minSdk=26
+targetSdk=28
+apk_size=72M
+apk_sha256=a20b495036016f5c2084c5375ae190a0cdaf4165ee8c0cf8dd57cc94e10f93cb
+adb_install=Success
+signature_v2=true
+signer=C=US, O=Android, CN=Android Debug
+signer_certificate_sha256=7d08d5043a0aa168cc75da896fbd1526cdceb8c445daa128962c841a8e3ca97b
+
+CONTROL SDK AND PATCH
+flutter=3.44.8 stable
+framework_revision=058e0af2c2b57e369d905a03ac9748b0ebf543c6
+engine_revision=0cd610717bde95fd88343c64f81c11ba4e5c0010
+dart=3.12.2
+patch=poc/android-runner/flutter-tool/android-host.patch
+
+The version-pinned patch changes only Android-host behavior:
+1. skip Flutter's normal cache updater because it has no Android host artifact set;
+2. read the hash-checked flutter.version.json instead of refreshing version data with Git;
+3. calculate the display-only framework age from frameworkCommitDate without Git.
+
+A fail-closed Git compatibility shim is bundled because Flutter requires a Git
+executable to be discoverable during startup. It exits 69 if invoked and never
+fabricates Git output. A logging probe confirmed it was not invoked by the
+successful version/create/pub sequence.
+
+BUNDLED FLUTTER TOOL
+asset=assets/flutter/flutter-tool-3.44.8-android-arm64.zip
+asset_size_about=22M
+asset_sha256=caf9232743f9f7aaca25a3aa41d36ad358fd16a7884e0e42e1889835a63abe73
+installed_root=/data/user/0/dev.fluttware.runner/files/toolchains/flutter-3.44.8-android-arm64/flutter
+installed_uncompressed_size=71M
+dart_sdk_link=flutter/bin/cache/dart-sdk -> /data/user/0/dev.fluttware.runner/files/toolchains/dart-3.12.2-android-arm64/dart-sdk
+
+The archive contains the patched portable flutter_tools kernel, pinned version
+and engine metadata, project templates, template images, Gradle wrapper,
+Flutter SDK pubspecs, sky_engine, flutter_gpu, the source patch, and the
+fail-closed Git shim. It does not contain OpenJDK, Gradle, an Android SDK,
+AAPT2, or Flutter engine host executables.
+
+FAILURE PROGRESSION
+
+1. Stock cached flutter_tools.snapshot failed before Flutter started:
+
+Snapshot not compatible with the current VM configuration: the snapshot
+requires 'release no-code_comments no-dwarf_stack_traces_mode no-lazy_dispatchers
+no-tsan x64 linux no-compressed-pointers null-safety' but the VM has 'release
+no-code_comments no-dwarf_stack_traces_mode no-lazy_dispatchers no-tsan arm64
+android no-compressed-pointers null-safety'.
+
+Cause: Flutter ships an AOT snapshot compiled for the Linux x64 Dart VM. An
+Android ARM64 Dart VM cannot load it.
+
+2. Recompiling flutter_tools as a portable kernel .dill let it start, but the
+unmodified tool reported that Git was missing during `flutter --version`.
+
+3. After satisfying discovery with the fail-closed shim, unpatched
+`flutter create` reached MaterialFonts.updateInner and failed because Flutter's
+normal cache update tried to resolve unsupported Android-host artifacts.
+
+4. The first patched `flutter create` failed because the deliberately minimal
+bundle omitted bin/cache/artifacts/gradle_wrapper. Adding the pinned wrapper
+made project creation pass.
+
+5. The first `flutter pub get` failed because the deliberately minimal bundle
+omitted the SDK package sky_engine. Adding pinned sky_engine and flutter_gpu
+made online resolution and subsequent offline reuse pass.
+
+FINAL PHYSICAL-DEVICE RUN
+flutter.installReused=false
+flutter.installElapsedMs=3929
+
+FLUTTWARE_FLUTTER_STEP_VERSION
+Flutter 3.44.8 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 058e0af2c2 (10 days ago) • 2026-07-23 10:56:21 -0700
+Engine • hash 13ffd72b2f9a5ca4db2a74ea52d5353ec2e8f939 (revision 0cd610717b) (10 days ago) • 2026-07-23 16:11:34.000Z
+Tools • Dart 3.12.2 • DevTools 2.57.0
+FLUTTWARE_FLUTTER_VERSION_EXIT=0
+
+FLUTTWARE_FLUTTER_STEP_CREATE
+Creating project flutter_cli_project...
+Wrote 34 files.
+FLUTTWARE_FLUTTER_CREATE_EXIT=0
+FLUTTWARE_FLUTTER_PROJECT_FILES_OK
+
+FLUTTWARE_FLUTTER_STEP_PUB_ONLINE
+Resolving dependencies...
+Downloading packages...
+Changed 26 dependencies!
+FLUTTWARE_FLUTTER_PUB_ONLINE_EXIT=0
+
+FLUTTWARE_FLUTTER_STEP_PUB_OFFLINE
+Resolving dependencies...
+Got dependencies!
+FLUTTWARE_FLUTTER_PUB_OFFLINE_EXIT=0
+
+FLUTTWARE_FLUTTER_CORE_STEPS_OK
+FLUTTWARE_FLUTTER_ALL_STEPS_OK
+flutter.exit=0 elapsedMs=9471
+flutter.project.main=true
+flutter.project.gradleWrapper=true
+flutter.project.packageConfig=true
+
+WARM RELAUNCH
+dart.installReused=true
+dart.installElapsedMs=258
+flutter.installReused=true
+flutter.installElapsedMs=95
+FLUTTWARE_FLUTTER_VERSION_EXIT=0
+FLUTTWARE_FLUTTER_CREATE_EXIT=0
+FLUTTWARE_FLUTTER_PROJECT_FILES_OK
+FLUTTWARE_FLUTTER_PUB_ONLINE_EXIT=0
+FLUTTWARE_FLUTTER_PUB_OFFLINE_EXIT=0
+FLUTTWARE_FLUTTER_ALL_STEPS_OK
+flutter.exit=0 elapsedMs=7549
+flutter.project.main=true
+flutter.project.gradleWrapper=true
+flutter.project.packageConfig=true
+
+ADB FILE AND STORAGE READBACK
+dart_toolchain=82M
+flutter_toolchain=71M
+pub_cache=29M
+generated_project=340K
+.dart_tool/package_config.json=6043 bytes
+android/gradle/wrapper/gradle-wrapper.jar=53636 bytes
+lib/main.dart=353 bytes
+
+RESULT
+PASS: The standalone Android app installed a hash-checked, version-pinned
+Flutter tool bundle from its APK, linked it to the separately installed native
+Android/ARM64 Dart SDK, ran `flutter --version`, generated an Android Flutter
+project, resolved and downloaded Pub packages, populated its private Pub cache,
+then resolved the same dependencies offline. It reused both toolchains on the
+next app launch.
+
+LIMIT OF THIS RESULT
+This does not yet prove `flutter doctor`, Java/Gradle execution, Flutter front-
+end compilation of an application, engine artifact use, AAPT2/D8 packaging,
+APK signing, or installation of a newly generated Flutter APK. Those require
+the next Android build-toolchain milestone. The installed APK in this proof was
+built on the development host and only contains the on-device probes.

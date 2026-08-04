@@ -1,0 +1,44 @@
+name: Bug report
+description: Report a reproducible Flutterware problem
+title: "bug: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve Flutterware. Remove secrets and personal data from logs.
+  - type: input
+    id: version
+    attributes:
+      label: Flutterware version or commit
+      placeholder: Commit SHA or app version
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: Samsung SM-A356E, Android 16, ARM64
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the expected result and the actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      render: shell

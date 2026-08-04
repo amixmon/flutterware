@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter:
+    name: Flutter analyze and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/fluttware_flutter
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.8
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+  repository:
+    name: Repository hygiene
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Reject committed secrets and build outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          forbidden="$(git ls-files | grep -E '^(apps/fluttware_flutter/build|poc/android-runner/(app/)?build)/|(^|/)(\.dart_tool|\.gradle)/|\.(jks|keystore)$' || true)"
+          if [[ -n "$forbidden" ]]; then
+            printf 'Forbidden tracked files:\n%s\n' "$forbidden" >&2
+            exit 1
+          fi

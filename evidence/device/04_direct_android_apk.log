@@ -1,0 +1,57 @@
+Fluttware direct Android APK build — physical-device evidence
+Date: 2026-08-03 (Africa/Addis_Ababa)
+Device: Samsung SM-A356E, ARM64, Android 16 / API 36
+Runner: dev.fluttware.runner 0.16-direct-d8-jar (targetSdk 28 research build)
+
+The build below ran inside the runner's app-private storage. No Gradle
+process was used by this APK build.
+
+FLUTTWARE_DIRECT_STEP_PREPARE
+FLUTTWARE_DIRECT_STEP_AAPT2_COMPILE
+FLUTTWARE_DIRECT_STEP_AAPT2_LINK
+FLUTTWARE_DIRECT_STEP_JAVAC
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+FLUTTWARE_DIRECT_STEP_D8
+FLUTTWARE_DIRECT_STEP_PACKAGE
+FLUTTWARE_DIRECT_STEP_SIGN
+FLUTTWARE_DIRECT_STEP_VERIFY
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+FLUTTWARE_DIRECT_APK_OK
+FLUTTWARE_DIRECT_APK_PATH=/data/user/0/dev.fluttware.runner/files/workspace/app.apk
+direct.exit=0 elapsedMs=6616
+direct.apk.exists=true size=12695
+apk.sha256=44b48af1712b10ef37977f5c8606d0f5c3092e658e49687bd221d575dda097f4
+
+Installer failures preserved during development:
+
+1. PackageInstaller initially threw java.lang.SecurityException: Files still
+   open. ApkInstaller called session.commit() inside the same try-with-resources
+   scope as session.openWrite(). The copy streams were moved to a nested scope,
+   guaranteeing close after fsync and before commit.
+2. One committed session returned INSTALL_FAILED_VERIFICATION_FAILURE while
+   the phone's package verifiers ran. A user-authorized retry completed; the
+   system log then reported:
+
+installation completed for package:dev.fluttware.generated
+Request from{dev.fluttware.runner}
+result of session: 1, Session installed
+
+Installed package evidence:
+
+package=dev.fluttware.generated
+versionCode=1 minSdk=26 targetSdk=28
+versionName=1.0
+firstInstallTime=2026-08-03 13:23:59
+topResumedActivity=dev.fluttware.generated/.MainActivity
+visibleText=FLUTTWARE DIRECT APK OK | No Gradle was used.
+

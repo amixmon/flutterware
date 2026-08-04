@@ -1,0 +1,4 @@
+$ dart_control compile kernel /tmp/fluttware-host-control.xeEYBU/hello.dart -o /tmp/fluttware-host-control.xeEYBU/hello.dill
+Compiling /tmp/fluttware-host-control.xeEYBU/hello.dart to kernel file /tmp/fluttware-host-control.xeEYBU/hello.dill.
+
+[exit_code=0]

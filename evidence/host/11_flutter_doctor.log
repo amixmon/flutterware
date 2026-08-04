@@ -1,0 +1,156 @@
+$ flutter_control doctor -v
+[  +17 ms] executing: uname -m
+[   +7 ms] Exit code 0 from: uname -m
+[        ] x86_64
+[  +11 ms] Artifact Instance of 'MaterialFonts' is not required, skipping update.
+[        ] Artifact Instance of 'GradleWrapper' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterSdk' is not required, skipping update.
+[        ] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FontSubsetArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'PubDependencies' is not required, skipping update.
+[        ] executing: [/home/miki-m/flutter/] git -c log.showSignature=false log HEAD -n 1 --pretty=format:%ad --date=iso
+[   +7 ms] Exit code 0 from: git -c log.showSignature=false log HEAD -n 1 --pretty=format:%ad --date=iso
+[        ] 2026-07-23 10:56:21 -0700
+[  +13 ms] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterEngineStamp' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[   +3 ms] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[  +40 ms] The new artifact "libimobiledevice" was downloaded, but Flutter failed to update its stamp file, receiving the error "FileSystemException: Cannot open file, path = '/home/miki-m/flutter/bin/cache/libimobiledevice.stamp' (OS Error: Read-only file system, errno = 30)". Flutter can continue, but the artifact may be re-downloaded on subsequent invocations until the problem is resolved.
+[   +2 ms] The new artifact "libusbmuxd" was downloaded, but Flutter failed to update its stamp file, receiving the error "FileSystemException: Cannot open file, path = '/home/miki-m/flutter/bin/cache/libusbmuxd.stamp' (OS Error: Read-only file system, errno = 30)". Flutter can continue, but the artifact may be re-downloaded on subsequent invocations until the problem is resolved.
+[   +1 ms] Artifact Instance of 'MaterialFonts' is not required, skipping update.
+[        ] Artifact Instance of 'GradleWrapper' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterEngineStamp' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterSdk' is not required, skipping update.
+[        ] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FontSubsetArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'PubDependencies' is not required, skipping update.
+[  +46 ms] executing: [/home/miki-m/flutter/] git -c log.showSignature=false log -n 1 --pretty=format:%ar
+[   +8 ms] Exit code 0 from: git -c log.showSignature=false log -n 1 --pretty=format:%ar
+[        ] 11 days ago
+[  +29 ms] executing: /usr/lib/android-sdk/platform-tools/adb devices -l
+[  +15 ms] [✓] Flutter (Channel stable, 3.44.8, on Ubuntu 26.04 LTS 7.0.0-27-generic, locale en_US.UTF-8) [66ms]
+[        ]     • Flutter version 3.44.8 on channel stable at /home/miki-m/flutter
+[        ]     • Upstream repository https://github.com/flutter/flutter.git
+[        ]     • Framework revision 058e0af2c2 (11 days ago), 2026-07-23 10:56:21 -0700
+[        ]     • Engine revision 0cd610717b
+[        ]     • Dart version 3.12.2
+[        ]     • DevTools version 2.57.0
+[        ]     • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-native-assets, enable-swift-package-manager, omit-legacy-version-file, enable-lldb-debugging, enable-uiscene-migration
+[   +1 ms] [✗] Android toolchain - develop for Android devices [31ms]
+[        ]     • Android SDK at /usr/lib/android-sdk
+[        ]     • Emulator version unknown
+[        ]     ✗ cmdline-tools component is missing.
+[        ]       Try installing or updating Android Studio.
+[        ]       Alternatively, download the tools from https://developer.android.com/studio#command-line-tools-only and make sure to set the ANDROID_HOME environment variable.
+[        ]       See https://developer.android.com/studio/command-line for more details.
+[        ] [✓] Chrome - develop for the web [18ms]
+[        ]     • Chrome at google-chrome
+[ +227 ms] [✓] Linux toolchain - develop for Linux desktop [253ms]
+[        ]     • Ubuntu clang version 21.1.8 (6ubuntu1)
+[        ]     • cmake version 4.2.3
+[        ]     • ninja version 1.13.2
+[        ]     • pkg-config version 2.5.1
+[        ]     • GL_EXT_framebuffer_blit: no
+[        ]     • GL_EXT_texture_format_BGRA8888: no
+[ +419 ms] * daemon not running; starting now at tcp:5037
+           ADB server didn't ACK
+           Full server startup log: /tmp/adb.1000.log
+           Server had pid: 125
+           --- adb starting (pid 125) ---
+           08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Android Debug Bridge version 1.0.41
+           08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Version 34.0.5-debian
+           08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Installed as /usr/lib/android-sdk/platform-tools/adb
+           08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Running on Linux 7.0.0-27-generic (x86_64)
+           08-03 10:00:22.515   125   125 I adb     : main.cpp:63 
+           08-03 10:00:23.015   125   125 F adb     : main.cpp:165 could not install *smartsocket* listener: Operation not permitted
+
+           * failed to start daemon
+           adb: failed to check server version: cannot connect to daemon
+[   +1 ms] [☠] Connected device (the doctor check crashed)
+[        ]     ✗ Due to an error, the doctor check did not complete. If the error message below is not helpful, please let us know about this issue at https://github.com/flutter/flutter/issues.
+[        ]     ✗ Error: Unable to run "adb", check your Android SDK installation and ANDROID_HOME environment variable: /usr/lib/android-sdk/platform-tools/adb
+[        ]       Error details: Process exited abnormally with exit code 1:
+[        ]       * daemon not running; starting now at tcp:5037
+[        ]       ADB server didn't ACK
+[        ]       Full server startup log: /tmp/adb.1000.log
+[        ]       Server had pid: 125
+[        ]       --- adb starting (pid 125) ---
+[        ]       08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Android Debug Bridge version 1.0.41
+[        ]       08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Version 34.0.5-debian
+[        ]       08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Installed as /usr/lib/android-sdk/platform-tools/adb
+[        ]       08-03 10:00:22.515   125   125 I adb     : main.cpp:63 Running on Linux 7.0.0-27-generic (x86_64)
+[        ]       08-03 10:00:22.515   125   125 I adb     : main.cpp:63 
+[        ]       08-03 10:00:23.015   125   125 F adb     : main.cpp:165 could not install *smartsocket* listener: Operation not permitted
+[        ]       * failed to start daemon
+[        ]       adb: failed to check server version: cannot connect to daemon
+[        ]     • #0      throwToolExit (package:flutter_tools/src/base/common.dart:34:3)
+[        ]       #1      AndroidDevices.pollingGetDevices (package:flutter_tools/src/android/android_device_discovery.dart:77:7)
+[        ]       <asynchronous suspension>
+[        ]       #2      PollingDeviceDiscovery._populateDevices (package:flutter_tools/src/device.dart:558:36)
+[        ]       <asynchronous suspension>
+[        ]       #3      Future.wait.<anonymous closure> (dart:async/future.dart:546:21)
+[        ]       <asynchronous suspension>
+[        ]       #4      DeviceManager.refreshAllDevices (package:flutter_tools/src/device.dart:201:40)
+[        ]       <asynchronous suspension>
+[        ]       #5      DeviceValidator.validateImpl (package:flutter_tools/src/doctor.dart:775:34)
+[        ]       <asynchronous suspension>
+[        ]       #6      DoctorValidator.validate (package:flutter_tools/src/doctor_validator.dart:58:37)
+[        ]       <asynchronous suspension>
+[        ]       #7      Future.any.onValue (dart:async/future.dart:637:5)
+[        ]       <asynchronous suspension>
+[        ] [!] Network resources [33ms]
+[        ]     ✗ A network error occurred while checking "https://pub.dev/": Failed host lookup: 'pub.dev'
+[        ]     ✗ A network error occurred while checking "https://storage.googleapis.com/": Failed host lookup: 'storage.googleapis.com'
+[        ]     ✗ A network error occurred while checking "https://maven.google.com/": Failed host lookup: 'maven.google.com'
+[        ]     ✗ A network error occurred while checking "https://cocoapods.org/": Failed host lookup: 'cocoapods.org'
+[        ]     ✗ A network error occurred while checking "https://github.com/": Failed host lookup: 'github.com'
+[        ] ! Doctor found issues in 3 categories.
+[        ] "flutter doctor" took 817ms.
+[   +8 ms] Running 2 shutdown hooks
+[   +1 ms] Shutdown hooks complete
+[        ] exiting with code 0
+
+[exit_code=0]

@@ -1,0 +1,84 @@
+Fluttware direct Flutter debug APK — physical-device evidence
+Date: 2026-08-03 (Africa/Addis_Ababa)
+Device: Samsung SM-A356E, ARM64, Android 16 / API 36
+Runner: dev.fluttware.runner 0.17-direct-flutter-debug
+Runner APK SHA-256: 2d8bb745e54de976c4563ff682752cebb9de169792745060a5e98b4a50c083a2
+Runner APK size: 228 MB
+
+Scope
+-----
+Runner 0.17 contains the Flutter framework sources, Android/ARM64 frontend
+server, Flutter-patched SDK, debug snapshots, stripped ARM64 engine libraries,
+embedding dex, Android SDK, AAPT2, OpenJDK, apksigner, Dart, and patched Flutter
+CLI. The generated-project build below ran inside the runner's private storage.
+It did not invoke Gradle or Android Gradle Plugin.
+
+Fresh bundled debug-toolchain extraction
+----------------------------------------
+direct.flutter.debugRoot=/data/user/0/dev.fluttware.runner/files/toolchains/flutter-debug-3.44.8-android-arm64/flutter-debug
+direct.flutter.debugArchiveSha256=95030e9f4e1e4611da656f4dc0374e4aa73e6e7670ad1d7eaa6e51991a918d75
+direct.flutter.debugInstallReused=false
+direct.flutter.debugInstallElapsedMs=3263
+
+Flutter kernel compilation
+--------------------------
+FLUTTWARE_DIRECT_FLUTTER_PIPELINE_KERNEL
+FLUTTWARE_FLUTTER_KERNEL_STEP_COMPILE
+result ec8f982b-2708-4cfa-8d13-db98749931f9
+ec8f982b-2708-4cfa-8d13-db98749931f9 /data/user/0/dev.fluttware.runner/files/workspace/flutter-direct-debug/app.dill 0
+FLUTTWARE_FLUTTER_KERNEL_SIZE=51927416
+FLUTTWARE_FLUTTER_KERNEL_OK
+
+Direct APK assembly
+-------------------
+FLUTTWARE_DIRECT_FLUTTER_PIPELINE_APK
+FLUTTWARE_DIRECT_FLUTTER_STEP_PREPARE
+FLUTTWARE_DIRECT_FLUTTER_STEP_AAPT2
+FLUTTWARE_DIRECT_FLUTTER_STEP_ASSETS
+FLUTTWARE_DIRECT_FLUTTER_STEP_PACKAGE
+FLUTTWARE_DIRECT_FLUTTER_STEP_SIGN
+FLUTTWARE_DIRECT_FLUTTER_STEP_VERIFY
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+FLUTTWARE_DIRECT_FLUTTER_APK_SIZE=40634009
+FLUTTWARE_DIRECT_FLUTTER_APK_PATH=/data/user/0/dev.fluttware.runner/files/workspace/flutter-app.apk
+FLUTTWARE_DIRECT_FLUTTER_APK_OK
+FLUTTWARE_DIRECT_FLUTTER_PIPELINE_OK
+direct.flutter.exit=0 elapsedMs=27640
+direct.flutter.apk.exists=true size=40634009
+generated.apk.sha256=b4b09a2f3fdc2ba0e4d86ffe66953bdbeb37b72b29c1bed1a238a0ccff09f8e2
+
+Install and runtime
+-------------------
+ADB was first used to transfer and install the already device-built APK for
+hash/signature/runtime inspection. Runner 0.17 was then brought back to the
+foreground, where its APK field correctly contained `flutter-app.apk`; tapping
+**Install APK** exercised the in-app PackageInstaller path with the same real
+Flutter APK:
+
+APK staged; waiting for Android confirmation
+installer status=0 message=INSTALL_SUCCEEDED: Session installed
+
+Performing Streamed Install
+Success
+Activity: dev.fluttware.fluttergenerated/com.example.fluttware_reference.MainActivity
+LaunchState: COLD
+TotalTime: 2975 ms
+topResumedActivity=dev.fluttware.fluttergenerated/com.example.fluttware_reference.MainActivity
+visible Flutter semantics=Hello World!
+application crash signatures found=0
+
+Architecture note
+-----------------
+The runner packages revision-matched engine/embedding dex and native libraries
+as toolchain artifacts. This is analogous to Flutter's prebuilt embedding and
+engine AAR artifacts and Sketchware's bundled compiler libraries. The user's
+Dart source is compiled to kernel, bundled, signed, and installed on Android.
+The embedding template is created at runner-development time by
+flutter-debug/prepare-flutter-debug.sh, not rebuilt for every user project.

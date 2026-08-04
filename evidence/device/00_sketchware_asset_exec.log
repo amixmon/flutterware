@@ -1,0 +1,75 @@
+Fluttware Sketchware-style writable-cache executable proof
+Date: 2026-08-03
+
+DEVICE
+model=SM-A356E
+primary_abi=arm64-v8a
+android_release=16
+android_api=36
+kernel=5.15.189-android13-3-33470412
+
+APK
+package=dev.fluttware.runner
+versionCode=2
+versionName=0.2-sketchware-probe
+minSdk=26
+targetSdk=28
+apk_size=837K
+apk_sha256=bb2d1cb8b531f8069e22ddffb05204a2384900c192840a8c034ee84e9fc480c2
+signature_v2=true
+signer=Android Debug
+
+BUNDLED NATIVE ASSET
+path=assets/native/fluttware-probe-arm64-v8a
+format=ELF 64-bit LSB PIE executable, ARM aarch64
+android_min_api=26
+interpreter=/system/bin/linker64
+sha256=1b9c169880fac16ad8096e37c68232bfb3d232f20879858313096d157a31c609
+
+ADB INSTALL
+Performing Streamed Install
+Success
+
+INSTALLED EXECUTABLE
+-rwx------ 1 u0_a250 u0_a250_cache 8840 cache/fluttware-native-probe
+sha256=1b9c169880fac16ad8096e37c68232bfb3d232f20879858313096d157a31c609
+
+CAPTURED APP/CHILD LOG
+filesDir=/data/user/0/dev.fluttware.runner/files
+androidSdk=36 appTargetSdk=28
+supportedAbis=[arm64-v8a, armeabi-v7a, armeabi]
+probe.path=/data/user/0/dev.fluttware.runner/cache/fluttware-native-probe
+probe.canExecute=true
+E: FLUTTWARE_NATIVE_STDERR_OK
+O: FLUTTWARE_NATIVE_PROBE_OK
+O: compiled_abi=arm64-v8a
+O: pointer_bits=64
+O: pid=1726 uid=10250 gid=10250
+O: uname.sysname=Linux
+O: uname.release=5.15.189-android13-3-33470412
+O: uname.machine=aarch64
+O: cwd=/data/user/0/dev.fluttware.runner/files/workspace
+O: env.HOME=/data/user/0/dev.fluttware.runner/files
+O: env.TMPDIR=/data/user/0/dev.fluttware.runner/cache
+O: env.FLUTTWARE_PROBE_TOKEN=asset-cache-exec
+O: argv[0]=/data/user/0/dev.fluttware.runner/cache/fluttware-native-probe
+O: argv[1]=hello-from-fluttware
+probe.exit=0 elapsedMs=91
+proof.file=/data/user/0/dev.fluttware.runner/files/workspace/native-probe-output.txt
+proof.content=FLUTTWARE_CHILD_WRITE_OK|pid=1726
+
+ADB READBACK
+FLUTTWARE_CHILD_WRITE_OK
+pid=1726
+
+RESULT
+PASS: On this ARM64 Android 16 device, an app targeting API 28 copied an
+Android/Bionic PIE from APK assets to its writable cache, chmodded it 0700,
+executed it, captured both output streams and exit status, supplied controlled
+environment/working-directory values, and received a child-created file.
+
+BUILD-TIME CORRECTIONS
+1. Files.readString was unavailable against the selected Android API stubs; the
+   probe now uses Files.readAllBytes.
+2. AGP 9 rejects android:extractNativeLibs in the manifest; the obsolete
+   attribute was removed. It is unrelated to this asset-cache experiment.

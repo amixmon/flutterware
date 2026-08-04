@@ -1,0 +1,142 @@
+$ bash -c cd\ \'/tmp/fluttware-host-control.xeEYBU/control_app\'\ \&\&\ HOME=\'/tmp/fluttware-host-control.xeEYBU/home\'\ PUB_CACHE=\'/tmp/fluttware-host-control.xeEYBU/home/.pub-cache\'\ FLUTTER_ROOT=\'/home/miki-m/flutter\'\ FLUTTER_ALREADY_LOCKED=true\ \'/home/miki-m/flutter/bin/cache/dart-sdk/bin/dart\'\ --packages=\'/home/miki-m/flutter/packages/flutter_tools/.dart_tool/package_config.json\'\ \'/home/miki-m/flutter/bin/cache/flutter_tools.snapshot\'\ --suppress-analytics\ build\ apk\ --debug\ --target-platform\ android-arm64\ --no-pub\ --verbose
+[  +20 ms] executing: uname -m
+[   +7 ms] Exit code 0 from: uname -m
+[        ] x86_64
+[   +7 ms] Artifact Instance of 'MaterialFonts' is not required, skipping update.
+[        ] Artifact Instance of 'GradleWrapper' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterSdk' is not required, skipping update.
+[        ] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FontSubsetArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'PubDependencies' is not required, skipping update.
+[        ] executing: [/home/miki-m/flutter/] git -c log.showSignature=false log HEAD -n 1 --pretty=format:%ad --date=iso
+[   +6 ms] Exit code 0 from: git -c log.showSignature=false log HEAD -n 1 --pretty=format:%ad --date=iso
+[        ] 2026-07-23 10:56:21 -0700
+[  +11 ms] Artifact Instance of 'AndroidGenSnapshotArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterEngineStamp' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[   +1 ms] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[  +29 ms] The new artifact "libimobiledevice" was downloaded, but Flutter failed to update its stamp file, receiving the error "FileSystemException: Cannot open file, path = '/home/miki-m/flutter/bin/cache/libimobiledevice.stamp' (OS Error: Read-only file system, errno = 30)". Flutter can continue, but the artifact may be re-downloaded on subsequent invocations until the problem is resolved.
+[   +1 ms] The new artifact "libusbmuxd" was downloaded, but Flutter failed to update its stamp file, receiving the error "FileSystemException: Cannot open file, path = '/home/miki-m/flutter/bin/cache/libusbmuxd.stamp' (OS Error: Read-only file system, errno = 30)". Flutter can continue, but the artifact may be re-downloaded on subsequent invocations until the problem is resolved.
+[        ] Artifact Instance of 'MaterialFonts' is not required, skipping update.
+[        ] Artifact Instance of 'GradleWrapper' is not required, skipping update.
+[   +1 ms] Artifact Instance of 'AndroidInternalBuildArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterWebSdk' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterEngineStamp' is not required, skipping update.
+[        ] Artifact Instance of 'LegacyCanvasKitRemover' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterSdk' is not required, skipping update.
+[        ] Artifact Instance of 'WindowsEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxEngineArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'LinuxFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'MacOSFuchsiaSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerSDKArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FlutterRunnerDebugSymbols' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'IosUsbArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'FontSubsetArtifacts' is not required, skipping update.
+[        ] Artifact Instance of 'PubDependencies' is not required, skipping update.
+[  +80 ms] Top-level Gradle build file not found, skipping migration of task "clean".
+[        ] Android Studio version could not be detected, skipping Gradle-Java version compatibility check.
+[   +1 ms] CMake project not found, skipping support Android 15 16k page size migration.
+[   +3 ms] The developer has already configured the Built-In Kotlin flag, skipping migration.
+[        ] The developer has already configured the new DSL flag, skipping migration.
+[   +4 ms] Using gradle from /tmp/fluttware-host-control.xeEYBU/control_app/android/gradlew.
+[  +18 ms] LocalFile: '/tmp/fluttware-host-control.xeEYBU/control_app/android/build.gradle.kts' doesn't provide an AGP version. Checking settings.
+[   +1 ms] LocalFile: '/tmp/fluttware-host-control.xeEYBU/control_app/android/settings.gradle.kts' provides AGP version: 9.0.1
+[   +1 ms] Running Gradle task 'assembleDebug'...
+[   +2 ms] executing: [/tmp/fluttware-host-control.xeEYBU/control_app/android/] /tmp/fluttware-host-control.xeEYBU/control_app/android/gradlew --full-stacktrace --info -Pverbose=true -Ptarget-platform=android-arm64 -Ptarget=lib/main.dart -Pbase-application-name=android.app.Application -Pdart-defines=RkxVVFRFUl9WRVJTSU9OPTMuNDQuOA==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MDU4ZTBhZjJjMg==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049MGNkNjEwNzE3Yg==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMi4y -Pdart-obfuscation=false -Ptrack-widget-creation=true -Ptree-shake-icons=false assembleDebug
+[ +120 ms] Exception in thread "main" java.io.FileNotFoundException: /home/miki-m/.gradle/wrapper/dists/gradle-9.1.0-all/7wzd0jkjit61aq2p43wpjgij9/gradle-9.1.0-all.zip.lck (Read-only file system)
+[        ] 	at java.base/java.io.RandomAccessFile.open0(Native Method)
+[        ] 	at java.base/java.io.RandomAccessFile.open(RandomAccessFile.java:344)
+[        ] 	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:259)
+[        ] 	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:213)
+[        ] 	at org.gradle.wrapper.ExclusiveFileAccessManager.access(ExclusiveFileAccessManager.java:49)
+[        ] 	at org.gradle.wrapper.Install.createDist(Install.java:48)
+[        ] 	at org.gradle.wrapper.WrapperExecutor.execute(WrapperExecutor.java:128)
+[        ] 	at org.gradle.wrapper.GradleWrapperMain.main(GradleWrapperMain.java:61)
+[   +4 ms] Running Gradle task 'assembleDebug'... (completed in 127ms)
+[        ] [!] Gradle threw an error while downloading artifacts from the network.
+[        ] Retrying Gradle Build: #1, wait time: 100ms
+[ +102 ms] LocalFile: '/tmp/fluttware-host-control.xeEYBU/control_app/android/build.gradle.kts' doesn't provide an AGP version. Checking settings.
+[        ] LocalFile: '/tmp/fluttware-host-control.xeEYBU/control_app/android/settings.gradle.kts' provides AGP version: 9.0.1
+[        ] Running Gradle task 'assembleDebug'...
+[        ] executing: [/tmp/fluttware-host-control.xeEYBU/control_app/android/] /tmp/fluttware-host-control.xeEYBU/control_app/android/gradlew --full-stacktrace --info -Pverbose=true -Ptarget-platform=android-arm64 -Ptarget=lib/main.dart -Pbase-application-name=android.app.Application -Pdart-defines=RkxVVFRFUl9WRVJTSU9OPTMuNDQuOA==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MDU4ZTBhZjJjMg==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049MGNkNjEwNzE3Yg==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMi4y -Pdart-obfuscation=false -Ptrack-widget-creation=true -Ptree-shake-icons=false assembleDebug
+[ +104 ms] Exception in thread "main" java.io.FileNotFoundException: /home/miki-m/.gradle/wrapper/dists/gradle-9.1.0-all/7wzd0jkjit61aq2p43wpjgij9/gradle-9.1.0-all.zip.lck (Read-only file system)
+[        ] 	at java.base/java.io.RandomAccessFile.open0(Native Method)
+[        ] 	at java.base/java.io.RandomAccessFile.open(RandomAccessFile.java:344)
+[        ] 	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:259)
+[        ] 	at java.base/java.io.RandomAccessFile.<init>(RandomAccessFile.java:213)
+[        ] 	at org.gradle.wrapper.ExclusiveFileAccessManager.access(ExclusiveFileAccessManager.java:49)
+[        ] 	at org.gradle.wrapper.Install.createDist(Install.java:48)
+[        ] 	at org.gradle.wrapper.WrapperExecutor.execute(WrapperExecutor.java:128)
+[        ] 	at org.gradle.wrapper.GradleWrapperMain.main(GradleWrapperMain.java:61)
+[   +5 ms] Running Gradle task 'assembleDebug'... (completed in 111ms)
+[        ] [!] Gradle threw an error while downloading artifacts from the network.
+[   +2 ms] "flutter apk" took 505ms.
+[  +16 ms] Gradle task assembleDebug failed with exit code 1
+[        ] 
+           #0      throwToolExit (package:flutter_tools/src/base/common.dart:34:3)
+           #1      AndroidGradleBuilder.buildGradleApp (package:flutter_tools/src/android/gradle.dart:595:7)
+           <asynchronous suspension>
+           #2      AndroidGradleBuilder.buildApk (package:flutter_tools/src/android/gradle.dart:236:5)
+           <asynchronous suspension>
+           #3      BuildApkCommand.runCommand (package:flutter_tools/src/commands/build_apk.dart:132:5)
+           <asynchronous suspension>
+           #4      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1630:27)
+           <asynchronous suspension>
+           #5      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+           <asynchronous suspension>
+           #6      CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+           <asynchronous suspension>
+           #7      FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:496:9)
+           <asynchronous suspension>
+           #8      AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+           <asynchronous suspension>
+           #9      FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:431:5)
+           <asynchronous suspension>
+           #10     FlutterCommandRunner.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:307:33)
+           <asynchronous suspension>
+           #11     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+           <asynchronous suspension>
+           #12     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+           <asynchronous suspension>
+           #13     main (package:flutter_tools/executable.dart:103:3)
+           <asynchronous suspension>
+
+
+[        ] Running 1 shutdown hook
+[   +1 ms] Shutdown hooks complete
+[        ] exiting with code 1
+
+[exit_code=1]

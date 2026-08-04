@@ -1,0 +1,4 @@
+$ dart_control compile exe /tmp/fluttware-host-control.xeEYBU/hello.dart -o /tmp/fluttware-host-control.xeEYBU/hello
+Generated: /tmp/fluttware-host-control.xeEYBU/hello
+
+[exit_code=0]

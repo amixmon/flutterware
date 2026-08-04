@@ -1,0 +1,35 @@
+evidence/device/**
+!evidence/device/.gitkeep
+!evidence/device/*.log
+poc/termux/work/
+poc/termux/logs/
+poc/android-runner/.gradle/
+poc/android-runner/build/
+poc/android-runner/app/build/
+# These archives duplicate the application bundles. POC preparation scripts
+# reproduce them locally under this path.
+poc/android-runner/app/src/main/assets/android-sdk/*.zip
+poc/android-runner/app/src/main/assets/dart/*.zip
+poc/android-runner/app/src/main/assets/flutter/*.zip
+poc/android-runner/app/src/main/assets/flutter-debug/*.zip
+poc/android-runner/app/src/main/assets/jdk/*.zip
+
+# Product toolchains are published as checksum-pinned GitHub Release assets.
+# Run tools/fetch_toolchains.sh after cloning.
+apps/fluttware_flutter/android/app/src/main/assets/android-sdk/*.zip
+apps/fluttware_flutter/android/app/src/main/assets/dart/*.zip
+apps/fluttware_flutter/android/app/src/main/assets/flutter/*.zip
+apps/fluttware_flutter/android/app/src/main/assets/flutter-debug/*.zip
+apps/fluttware_flutter/android/app/src/main/assets/jdk/*.zip
+*.jks
+*.keystore
+
+# Local IDE and platform state
+.idea/
+.vscode/
+local.properties
+
+# Reference material downloaded during the feasibility investigation. The
+# upstream project is linked from the report and should not be vendored here.
+/Sketchware-Pro-main/
+/Sketchware-Pro-main.zip

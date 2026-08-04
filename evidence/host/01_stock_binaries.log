@@ -1,0 +1,22 @@
+$ bash -c file\ \'/home/miki-m/flutter/bin/cache/dart-sdk/bin/dart\'\;\ find\ \'/home/miki-m/flutter/bin/cache/artifacts/engine\'\ -type\ f\ -name\ gen_snapshot\ -print\ -exec\ file\ \{\}\ \\\;\ \|\ head\ -80
+/home/miki-m/flutter/bin/cache/dart-sdk/bin/dart: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=ce957527040379271791ea7896ef5fdee2fd1293, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm-release/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm-release/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=1a34d8ad8f632c4f0d19264cc8eafccca4c82252, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm64-release/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm64-release/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=0c20d50eb7f41e47e873f01db75c6f706f4acd62, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-x64-release/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-x64-release/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=f7e2e20cb7ca713c0f194c0a2eb503130c738a2c, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-x64-profile/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-x64-profile/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=d94bbd1823bd80a7e59ebce8083dcfebbf327980, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/linux-x64-profile/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/linux-x64-profile/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=6f21a7e96cc902192a0a73d5e10bf7cc380c4a1f, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm64-profile/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm64-profile/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=30a57a82530352c54adf8175f6917d6a2c6f8985, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=ea3a1ae5dd7717b768afeeb72f6b838fae0298da, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/linux-x64-release/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/linux-x64-release/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=45fae96190f20424ed9f07653a6f192883ded2f6, stripped
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm-profile/linux-x64/gen_snapshot
+/home/miki-m/flutter/bin/cache/artifacts/engine/android-arm-profile/linux-x64/gen_snapshot: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=c8de2288bd35b10c4b6cf80f841f9f51c2be1f7f, stripped
+
+[exit_code=0]

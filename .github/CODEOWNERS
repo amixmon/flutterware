@@ -1,0 +1,7 @@
+# The maintainer reviews repository-wide changes.
+* @amixmon
+
+# Runtime and toolchain changes require explicit maintainer review.
+/apps/fluttware_flutter/android/ @amixmon
+/poc/ @amixmon
+/.github/ @amixmon

@@ -1,0 +1,66 @@
+diff --git a/packages/flutter_tools/lib/src/runner/flutter_command.dart b/packages/flutter_tools/lib/src/runner/flutter_command.dart
+--- a/packages/flutter_tools/lib/src/runner/flutter_command.dart
++++ b/packages/flutter_tools/lib/src/runner/flutter_command.dart
+@@ -245,7 +245,10 @@ abstract class FlutterCommand extends Command<FlutterCommandResult> {
+
+   bool get outputMachineFormat => boolArg('machine');
+
+-  bool get shouldUpdateCache => true;
++  // Fluttware manages its Android-host artifacts explicitly. Flutter's normal
++  // updater has no Android host artifact set and rejects several host tools.
++  // Keep the upstream updater unchanged on every supported desktop host.
++  bool get shouldUpdateCache => !globals.platform.isAndroid;
+
+   bool get deprecated => false;
+
+diff --git a/packages/flutter_tools/lib/src/runner/flutter_command_runner.dart b/packages/flutter_tools/lib/src/runner/flutter_command_runner.dart
+--- a/packages/flutter_tools/lib/src/runner/flutter_command_runner.dart
++++ b/packages/flutter_tools/lib/src/runner/flutter_command_runner.dart
+@@ -467,9 +467,12 @@ class FlutterCommandRunner extends CommandRunner<void> {
+               commandHasTerminal: globals.stdio.hasTerminal,
+             ),
+           );
+-          final FlutterVersion version = globals.flutterVersion.fetchTagsAndGetVersion(
+-            clock: globals.systemClock,
+-          );
++          // Android app sandboxes do not ship Git. The hash-checked Fluttware
++          // bundle includes flutter.version.json, so use that immutable version
++          // record on Android and retain upstream Git refreshes elsewhere.
++          final FlutterVersion version = globals.platform.isAndroid
++              ? globals.flutterVersion
++              : globals.flutterVersion.fetchTagsAndGetVersion(clock: globals.systemClock);
+           final String status;
+           if (topLevelMachineFlag) {
+             final Map<String, Object> jsonOut = version.toJson();
+diff --git a/packages/flutter_tools/lib/src/version.dart b/packages/flutter_tools/lib/src/version.dart
+--- a/packages/flutter_tools/lib/src/version.dart
++++ b/packages/flutter_tools/lib/src/version.dart
+@@ -229,7 +229,11 @@ abstract class FlutterVersion {
+
+   // TODO(fujino): calculate this relative to frameworkCommitDate for
+   // _FlutterVersionFromFile so we don't need a git call.
+-  late final String frameworkAge = _getTimeSinceCommit();
++  // Fluttware's Android bundle has a verified version manifest but no Git
++  // checkout. Derive the display-only age from that manifest on Android.
++  late final String frameworkAge = globals.platform.isAndroid
++      ? _clock.now().difference(DateTime.parse(frameworkCommitDate)).ago()
++      : _getTimeSinceCommit();
+   late final String engineAge = engineBuildDate != null
+       ? _clock.now().difference(DateTime.parse(engineBuildDate!)).ago()
+       : _getTimeSinceCommit(revision: engineRevision);
+diff --git a/packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt b/packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt
+--- a/packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt
++++ b/packages/flutter_tools/gradle/src/main/kotlin/FlutterPluginUtils.kt
+@@ -694,6 +694,12 @@ object FlutterPluginUtils {
+         project: Project,
+         pluginList: List<Map<String?, Any?>>
+     ) {
++        // Reading AGP 9's legacy ndkVersion initializes its NDK handler. There
++        // is nothing to compare in a Flutter app with no Android plugins, and
++        // doing so would unnecessarily require a multi-gigabyte NDK install.
++        if (project.findProperty("fluttware.androidHost") == "true" || pluginList.isEmpty()) {
++            return
++        }
+         project.afterEvaluate {
+             // getCompileSdkFromProject returns a string if the project uses a preview compileSdkVersion
+             // so default to Int.MAX_VALUE in that case.

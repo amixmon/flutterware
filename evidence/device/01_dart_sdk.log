@@ -1,0 +1,112 @@
+Fluttware bundled Android Dart SDK proof
+Date: 2026-08-03
+
+DEVICE
+model=SM-A356E
+primary_abi=arm64-v8a
+android_release=16
+android_api=36
+kernel=5.15.189-android13-3-33470412
+
+APK
+package=dev.fluttware.runner
+versionCode=3
+versionName=0.3-dart-probe
+minSdk=26
+targetSdk=28
+apk_size=33M
+apk_sha256=ded299beb641059d79e08ec70d058bd02d06563ae5fd5de069361e557f59b430
+adb_install=Success
+signature_v2=true
+signer=C=US, O=Android, CN=Android Debug
+signer_certificate_sha256=7d08d5043a0aa168cc75da896fbd1526cdceb8c445daa128962c841a8e3ca97b
+
+DART SOURCE PACKAGE
+provider=Termux packages
+package=dart_3.12.2_aarch64.deb
+package_size=87542844
+package_sha256=42690fbaa64a9d9efb62a0dbcaef4d055846ebacc446ecb586ec4ec8953a2161
+platform=Android/Bionic ARM64
+interpreter=/system/bin/linker64
+minimum_android_api=24
+
+BUNDLED MINIMAL SDK
+asset=assets/dart/dart-sdk-3.12.2-android-arm64.zip
+asset_size=32835273
+asset_sha256=56ff79e303240379c029ebad06dcba9adac3875879d4c88a4bb3d09600aa2c54
+installed_uncompressed_size=85392422
+install_root=/data/user/0/dev.fluttware.runner/files/toolchains/dart-3.12.2-android-arm64/dart-sdk
+
+The minimal SDK contains:
+dart-sdk/LICENSE
+dart-sdk/version
+dart-sdk/revision
+dart-sdk/bin/dart
+dart-sdk/bin/dartvm
+dart-sdk/bin/dartaotruntime
+dart-sdk/bin/snapshots/dartdev_aot.dart.snapshot
+dart-sdk/bin/snapshots/gen_kernel_aot.dart.snapshot
+dart-sdk/lib/_internal/vm_platform_product.dill
+
+COLD EXTRACTION RUN
+This was measured on the first version 0.3 build. A source-only cleanup removed
+an unused Java import before the final APK hash above was produced; the SDK
+asset hash and runtime code were unchanged.
+
+dart.installReused=false
+dart.installElapsedMs=3376
+Dart SDK version: 3.12.2 (stable) (Tue Jun 9 01:11:39 2026 -0700) on "android_arm64"
+FLUTTWARE_DART_SOURCE_OK
+operatingSystem=android
+abi=android_arm64
+cwd=/data/user/0/dev.fluttware.runner/files/workspace
+HOME=/data/user/0/dev.fluttware.runner/files
+TMPDIR=/data/user/0/dev.fluttware.runner/cache
+PUB_CACHE=/data/user/0/dev.fluttware.runner/files/pub-cache
+child.exitCode=0
+child.stdout=FLUTTWARE_DART_CHILD_PROCESS_OK
+FLUTTWARE_DART_STEP_COMPILE_KERNEL
+FLUTTWARE_DART_STEP_RUN_KERNEL
+FLUTTWARE_DART_ALL_STEPS_OK
+dart.exit=0
+dart.elapsedMs=2834
+dart.kernel.exists=true
+dart.kernel.size=8225792
+dart.proof=FLUTTWARE_DART_FILE_WRITE_OK
+
+ADB FILE READBACK
+dart-source-proof.txt=FLUTTWARE_DART_FILE_WRITE_OK
+check_android_host.dill.size=8225792
+direct_dart_version=Dart SDK version: 3.12.2 (stable) (Tue Jun 9 01:11:39 2026 -0700) on "android_arm64"
+
+FIRST WARM RUN
+dart.installReused=true
+dart.installElapsedMs=149
+FLUTTWARE_DART_ALL_STEPS_OK
+dart.exit=0
+dart.elapsedMs=2871
+dart.kernel.exists=true
+dart.kernel.size=8225792
+dart.proof=FLUTTWARE_DART_FILE_WRITE_OK
+
+FINAL HASHED APK RUN
+adb_install=Success
+dart.installReused=true
+dart.installElapsedMs=240
+FLUTTWARE_DART_ALL_STEPS_OK
+dart.exit=0
+dart.elapsedMs=3476
+dart.kernel.exists=true
+dart.kernel.size=8225792
+dart.proof=FLUTTWARE_DART_FILE_WRITE_OK
+
+RESULT
+PASS: The standalone Android app installed a hash-checked Android/ARM64 Dart
+SDK from its APK assets, executed Dart source, spawned and captured a child
+process, wrote into the private workspace, compiled source to a kernel `.dill`,
+executed the generated kernel, and reused the SDK on the next cold app launch.
+
+LIMIT OF THIS RESULT
+This result proves the Dart VM and kernel front end. It does not yet prove Pub,
+the Flutter tool, Flutter engine host binaries, Java/Gradle, Android resources,
+APK signing, or installation of a newly generated APK.

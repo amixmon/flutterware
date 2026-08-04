@@ -1,0 +1,144 @@
+Fluttware bundled OpenJDK and Gradle proof
+Date: 2026-08-03
+
+DEVICE
+model=SM-A356E
+primary_abi=arm64-v8a
+android_release=16
+android_api=36
+kernel=5.15.189-android13-3-33470412
+
+APK
+package=dev.fluttware.runner
+versionCode=5
+versionName=0.5-jdk-gradle-probe
+minSdk=26
+targetSdk=28
+apk_size_bytes=180698757
+apk_sha256=1314c2587be2b197bc0c808926113783e488a078709a63fe7781b5f3af11be79
+adb_install=Success
+signature_v2=true
+signer=C=US, O=Android, CN=Android Debug
+signer_certificate_sha256=7d08d5043a0aa168cc75da896fbd1526cdceb8c445daa128962c841a8e3ca97b
+
+PINNED SOURCE PACKAGES
+provider=Termux packages
+platform=Android/Bionic ARM64
+openjdk_21.0.12_sha256=05b08dd961c30928992f87632539c3704bf082e2984aee11441c6127f9fd7884
+libandroid_shmem_0.7_sha256=0da3a24d558b93c92bcf8d611e0826a99ff96e396b148e6cdf33b47c47c57ff6
+libandroid_spawn_0.3_sha256=7988fa788ef48ab5da9660443905a2e4099ac36221739d72f5c39acc644b4d1c
+libiconv_1.18_1_sha256=b19e6f348034bb48d2a5590b5cb242769f682c476717374d134d004cc663dc84
+zlib_1.3.2_sha256=75e7d0af17fcc3b40004309fdc00a1ddb9ae08346dce5e269902c34ac3966ac9
+libcxx_29_sha256=bb9f12113c137aa0e8513bb51cc49fe77a5ce3ca39ab9e92c57d228ecdf00222
+
+The preparation script rejects any source package whose hash differs. The JDK
+launchers are Android API 24 AArch64 ELF files using /system/bin/linker64. The
+bundle retains the complete Java runtime module image plus java, javac, jar,
+jarsigner, and keytool. It removes development-only jmods, sources, headers,
+demos, and manuals. Android compatibility libraries are placed in jdk/lib and
+selected with the app's private LD_LIBRARY_PATH.
+
+BUNDLED MINIMAL JDK
+asset=assets/jdk/openjdk-21.0.12-android-arm64.zip
+asset_size_bytes=64603508
+asset_sha256=d8e689d6c70b53510a112f60759b0a9461371c8418a755019041d98b9f4d77db
+installed_root=/data/user/0/dev.fluttware.runner/files/toolchains/openjdk-21.0.12-android-arm64/jdk
+installed_size_kib=178414
+
+FIRST DEVICE FAILURE
+The first bundle contained OpenJDK's declared direct compatibility libraries
+but not Termux's essential libc++ base package. Android's dynamic linker gave:
+
+Error: dl failure on line 533
+Error: failed .../jdk/lib/server/libjvm.so, because dlopen failed: library
+"libc++_shared.so" not found: needed by .../jdk/lib/libandroid-spawn.so in
+namespace (default)
+FLUTTWARE_JAVA_VERSION_EXIT=6
+FLUTTWARE_JAVAC_VERSION_EXIT=6
+FLUTTWARE_GRADLE_ONLINE_EXIT=6
+FLUTTWARE_GRADLE_OFFLINE_EXIT=6
+
+readelf confirmed that libandroid-spawn.so declares libc++_shared.so as a
+DT_NEEDED library. The hash-pinned Termux libc++ package was then included.
+
+CORRECTED COLD DEVICE RUN
+jdk.archiveSha256=d8e689d6c70b53510a112f60759b0a9461371c8418a755019041d98b9f4d77db
+jdk.installReused=false
+jdk.installElapsedMs=5531
+
+FLUTTWARE_JDK_STEP_JAVA_VERSION
+openjdk 21.0.12 2026-07-21
+OpenJDK Runtime Environment (build 21.0.12)
+OpenJDK 64-Bit Server VM (build 21.0.12, mixed mode)
+FLUTTWARE_JAVA_VERSION_EXIT=0
+
+FLUTTWARE_JDK_STEP_JAVAC_VERSION
+javac 21.0.12
+FLUTTWARE_JAVAC_VERSION_EXIT=0
+
+FLUTTWARE_JDK_STEP_GRADLE_ONLINE
+Downloading https://services.gradle.org/distributions/gradle-9.1.0-all.zip
+Unzipping .../gradle-9.1.0-all.zip to .../gradle-9.1.0-all/...
+Welcome to Gradle 9.1.0!
+Gradle 9.1.0
+Kotlin:        2.2.0
+Groovy:        4.0.28
+Launcher JVM:  21.0.12 (Termux 21.0.12)
+Daemon JVM:    .../openjdk-21.0.12-android-arm64/jdk
+OS:            Linux 5.15.189-android13-3-33470412 aarch64
+FLUTTWARE_GRADLE_ONLINE_EXIT=0
+
+FLUTTWARE_JDK_STEP_GRADLE_OFFLINE
+Gradle 9.1.0
+Launcher JVM:  21.0.12 (Termux 21.0.12)
+OS:            Linux 5.15.189-android13-3-33470412 aarch64
+FLUTTWARE_GRADLE_OFFLINE_EXIT=0
+FLUTTWARE_JDK_GRADLE_ALL_STEPS_OK
+jdk.exit=0 elapsedMs=26034
+
+GRADLE DISTRIBUTION AND CACHE
+url=https://services.gradle.org/distributions/gradle-9.1.0-all.zip
+zip_size_bytes=232491070
+zip_sha256=b84e04fa845fecba48551f425957641074fcc00a88a84d2aae5808743b35fc85
+gradle_cache_size_kib=776534
+gradle_user_home=/data/user/0/dev.fluttware.runner/files/gradle-cache
+
+WARM RELAUNCH
+dart.installReused=true
+dart.installElapsedMs=75
+FLUTTWARE_DART_ALL_STEPS_OK
+flutter.installReused=true
+flutter.installElapsedMs=73
+FLUTTWARE_FLUTTER_ALL_STEPS_OK
+jdk.installReused=true
+jdk.installElapsedMs=208
+FLUTTWARE_JAVA_VERSION_EXIT=0
+FLUTTWARE_JAVAC_VERSION_EXIT=0
+FLUTTWARE_GRADLE_ONLINE_EXIT=0
+FLUTTWARE_GRADLE_OFFLINE_EXIT=0
+FLUTTWARE_JDK_GRADLE_ALL_STEPS_OK
+jdk.exit=0 elapsedMs=3260
+
+ON-DEVICE STORAGE READBACK
+dart_toolchain_kib=83525
+flutter_toolchain_kib=72375
+openjdk_toolchain_kib=178414
+pub_cache_kib=30046
+gradle_cache_kib=776534
+generated_project_kib=340
+
+RESULT
+PASS: The standalone Android app installed a hash-checked Android/Bionic ARM64
+OpenJDK from APK assets, ran Java 21 and javac, launched the Flutter-generated
+Gradle wrapper, downloaded and unpacked Gradle 9.1.0, ran it on the Android
+ARM64 JVM, then launched it again with offline mode from the private cache. A
+warm app relaunch reused the JDK and Gradle distribution.
+
+LIMIT OF THIS RESULT
+The Gradle proof runs `--version`; it does not yet configure the generated
+Flutter Android build, resolve AGP/Kotlin build plugins, compile Java/Kotlin,
+or produce an APK. The next bundle must add Flutter's Gradle plugin sources, an
+Android SDK platform, Android build-tool JARs, and ARM64/Bionic AAPT2. The
+current executable-from-private-storage design also still depends on the
+research app's legacy targetSdk 28 and is not the final production packaging
+model.

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="fluttware_surface">#0B1220</color>
+    <color name="fluttware_surface_container">#172130</color>
+    <color name="flutterware_icon_background">#F4FAFF</color>
+    <color name="flutterware_brand_primary">#168CF3</color>
+    <color name="flutterware_splash_background">#07111F</color>
+</resources>

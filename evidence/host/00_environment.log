@@ -1,0 +1,17 @@
+$ bash -c uname\ -a\;\ uname\ -m\;\ java\ -version\;\ df\ -h\ .\;\ free\ -h\;\ command\ -v\ flutter\ dart\ java\ adb\ aapt2\ zipalign\ apksigner\ \|\|\ true
+Linux miki-m-HP-ENVY-x360-Convertible-15-ee1xxx 7.0.0-27-generic #27-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 18 19:13:49 UTC 2026 x86_64 GNU/Linux
+x86_64
+openjdk version "17.0.19" 2026-04-21
+OpenJDK Runtime Environment (build 17.0.19+10-1-26.04.2-Ubuntu)
+OpenJDK 64-Bit Server VM (build 17.0.19+10-1-26.04.2-Ubuntu, mixed mode, sharing)
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p5  175G   96G   71G  58% /home/miki-m/Projects/flutter-projects/fluttware
+               total        used        free      shared  buff/cache   available
+Mem:            14Gi       5.5Gi       1.3Gi       241Mi       8.2Gi       8.9Gi
+Swap:          4.0Gi          0B       4.0Gi
+/home/miki-m/flutter/bin/flutter
+/home/miki-m/flutter/bin/dart
+/usr/lib/jvm/java-17-openjdk-amd64/bin/java
+/usr/bin/adb
+
+[exit_code=0]
