@@ -1,7 +1,6 @@
 package dev.fluttware.runner;
 
 import android.content.Context;
-import android.system.Os;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,6 +41,7 @@ public final class DartSdkInstaller {
 
     public static Result install(Context context) throws Exception {
         long started = System.currentTimeMillis();
+        NativeLaunchers launchers = NativeLaunchers.from(context);
         File toolchains = new File(context.getFilesDir(), "toolchains");
         File destination = new File(toolchains, INSTALL_NAME);
         File sdkRoot = new File(destination, "dart-sdk");
@@ -51,7 +51,7 @@ public final class DartSdkInstaller {
         if (isComplete(sdkRoot)
                 && marker.isFile()
                 && archiveSha256.equals(readText(marker).trim())) {
-            chmodExecutables(sdkRoot);
+            launchers.linkDartSdk(sdkRoot);
             return new Result(
                     sdkRoot, archiveSha256, true, System.currentTimeMillis() - started);
         }
@@ -101,13 +101,13 @@ public final class DartSdkInstaller {
             throw new IllegalStateException("Extracted Dart SDK is incomplete: " + temporarySdkRoot);
         }
         writeText(new File(temporary, ".archive.sha256"), archiveSha256 + "\n");
-        chmodExecutables(temporarySdkRoot);
+        launchers.linkDartSdk(temporarySdkRoot);
 
         deleteRecursively(destination);
         if (!temporary.renameTo(destination)) {
             throw new IllegalStateException("Could not activate Dart SDK at " + destination);
         }
-        chmodExecutables(sdkRoot);
+        launchers.linkDartSdk(sdkRoot);
         return new Result(
                 sdkRoot, archiveSha256, false, System.currentTimeMillis() - started);
     }
@@ -120,12 +120,6 @@ public final class DartSdkInstaller {
                 && new File(sdkRoot, "bin/snapshots/gen_kernel_aot.dart.snapshot").isFile()
                 && new File(sdkRoot, "lib/_internal/vm_platform_product.dill").isFile()
                 && new File(sdkRoot, "version").isFile();
-    }
-
-    private static void chmodExecutables(File sdkRoot) throws Exception {
-        Os.chmod(new File(sdkRoot, "bin/dart").getAbsolutePath(), 0700);
-        Os.chmod(new File(sdkRoot, "bin/dartvm").getAbsolutePath(), 0700);
-        Os.chmod(new File(sdkRoot, "bin/dartaotruntime").getAbsolutePath(), 0700);
     }
 
     private static String sha256(InputStream input) throws Exception {

@@ -1,7 +1,6 @@
 package dev.fluttware.runner;
 
 import android.content.Context;
-import android.system.Os;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,6 +54,7 @@ public final class AndroidSdkInstaller {
 
     public static Result install(Context context) throws Exception {
         long started = System.currentTimeMillis();
+        NativeLaunchers launchers = NativeLaunchers.from(context);
         File toolchains = new File(context.getFilesDir(), "toolchains");
         File destination = new File(toolchains, INSTALL_NAME);
         File sdkRoot = new File(destination, "android-sdk");
@@ -64,7 +64,7 @@ public final class AndroidSdkInstaller {
         if (isComplete(sdkRoot)
                 && marker.isFile()
                 && archiveSha256.equals(readText(marker).trim())) {
-            chmodExecutables(sdkRoot);
+            launchers.linkAndroidSdk(sdkRoot, BUILD_TOOLS_VERSION);
             return new Result(
                     sdkRoot, archiveSha256, true, System.currentTimeMillis() - started);
         }
@@ -116,13 +116,13 @@ public final class AndroidSdkInstaller {
                     "Extracted Android SDK is incomplete: " + temporarySdkRoot);
         }
         writeText(new File(temporary, ".archive.sha256"), archiveSha256 + "\n");
-        chmodExecutables(temporarySdkRoot);
+        launchers.linkAndroidSdk(temporarySdkRoot, BUILD_TOOLS_VERSION);
 
         deleteRecursively(destination);
         if (!temporary.renameTo(destination)) {
             throw new IllegalStateException("Could not activate Android SDK at " + destination);
         }
-        chmodExecutables(sdkRoot);
+        launchers.linkAndroidSdk(sdkRoot, BUILD_TOOLS_VERSION);
         return new Result(
                 sdkRoot, archiveSha256, false, System.currentTimeMillis() - started);
     }
@@ -139,13 +139,6 @@ public final class AndroidSdkInstaller {
                 && new File(buildTools, "lib/apksigner.jar").isFile()
                 && new File(buildTools, "lib64/libc++_shared.so").isFile()
                 && new File(buildTools, "source.properties").isFile();
-    }
-
-    private static void chmodExecutables(File sdkRoot) throws Exception {
-        Os.chmod(
-                new File(sdkRoot, "build-tools/" + BUILD_TOOLS_VERSION + "/aapt2")
-                        .getAbsolutePath(),
-                0700);
     }
 
     private static String sha256(InputStream input) throws Exception {

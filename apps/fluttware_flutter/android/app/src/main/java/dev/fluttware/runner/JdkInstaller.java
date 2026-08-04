@@ -1,7 +1,6 @@
 package dev.fluttware.runner;
 
 import android.content.Context;
-import android.system.Os;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -51,6 +50,7 @@ public final class JdkInstaller {
 
     public static Result install(Context context) throws Exception {
         long started = System.currentTimeMillis();
+        NativeLaunchers launchers = NativeLaunchers.from(context);
         File toolchains = new File(context.getFilesDir(), "toolchains");
         File destination = new File(toolchains, INSTALL_NAME);
         File javaHome = new File(destination, "jdk");
@@ -60,7 +60,7 @@ public final class JdkInstaller {
         if (isComplete(javaHome)
                 && marker.isFile()
                 && archiveSha256.equals(readText(marker).trim())) {
-            chmodExecutables(javaHome);
+            launchers.linkJdk(javaHome);
             return new Result(
                     javaHome, archiveSha256, true, System.currentTimeMillis() - started);
         }
@@ -112,13 +112,13 @@ public final class JdkInstaller {
                     "Extracted OpenJDK runtime is incomplete: " + temporaryJavaHome);
         }
         writeText(new File(temporary, ".archive.sha256"), archiveSha256 + "\n");
-        chmodExecutables(temporaryJavaHome);
+        launchers.linkJdk(temporaryJavaHome);
 
         deleteRecursively(destination);
         if (!temporary.renameTo(destination)) {
             throw new IllegalStateException("Could not activate OpenJDK at " + destination);
         }
-        chmodExecutables(javaHome);
+        launchers.linkJdk(javaHome);
         return new Result(
                 javaHome, archiveSha256, false, System.currentTimeMillis() - started);
     }
@@ -134,14 +134,6 @@ public final class JdkInstaller {
                 && new File(javaHome, "lib/libandroid-spawn.so").isFile()
                 && new File(javaHome, "lib/libc++_shared.so").isFile()
                 && new File(javaHome, "lib/libz.so.1").isFile();
-    }
-
-    private static void chmodExecutables(File javaHome) throws Exception {
-        for (String launcher : new String[] {"java", "javac", "jar", "jarsigner", "keytool"}) {
-            Os.chmod(new File(javaHome, "bin/" + launcher).getAbsolutePath(), 0700);
-        }
-        Os.chmod(new File(javaHome, "lib/jexec").getAbsolutePath(), 0700);
-        Os.chmod(new File(javaHome, "lib/jspawnhelper").getAbsolutePath(), 0700);
     }
 
     private static String sha256(InputStream input) throws Exception {

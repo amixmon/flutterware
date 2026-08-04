@@ -114,8 +114,6 @@ public final class FlutterToolInstaller {
             throw new IllegalStateException("Extracted Flutter tool is incomplete: " + temporary);
         }
         writeText(new File(temporary, ".archive.sha256"), archiveSha256 + "\n");
-        chmodExecutables(temporaryFlutterRoot, temporaryCompatibilityBin);
-
         deleteRecursively(destination);
         if (!temporary.renameTo(destination)) {
             throw new IllegalStateException("Could not activate Flutter tool at " + destination);
@@ -146,7 +144,14 @@ public final class FlutterToolInstaller {
 
     private static void prepareRuntime(
             File flutterRoot, File compatibilityBin, File dartSdkRoot) throws Exception {
-        chmodExecutables(flutterRoot, compatibilityBin);
+        File gitShim = new File(compatibilityBin, "git");
+        if (!Files.isSymbolicLink(gitShim.toPath())
+                || !"/system/bin/false".equals(Os.readlink(gitShim.getAbsolutePath()))) {
+            if (gitShim.exists() || Files.isSymbolicLink(gitShim.toPath())) {
+                Files.delete(gitShim.toPath());
+            }
+            Os.symlink("/system/bin/false", gitShim.getAbsolutePath());
+        }
         File dartLink = new File(flutterRoot, "bin/cache/dart-sdk");
         File parent = dartLink.getParentFile();
         if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
@@ -166,14 +171,6 @@ public final class FlutterToolInstaller {
         if (!new File(dartLink, "bin/dart").isFile()) {
             throw new IllegalStateException("Flutter Dart SDK link is incomplete: " + dartLink);
         }
-    }
-
-    private static void chmodExecutables(File flutterRoot, File compatibilityBin) throws Exception {
-        Os.chmod(new File(compatibilityBin, "git").getAbsolutePath(), 0700);
-        Os.chmod(new File(flutterRoot, "bin/flutter").getAbsolutePath(), 0700);
-        Os.chmod(
-                new File(flutterRoot, "bin/cache/artifacts/gradle_wrapper/gradlew").getAbsolutePath(),
-                0700);
     }
 
     private static String sha256(InputStream input) throws Exception {

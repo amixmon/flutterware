@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.OpenableColumns
 import android.provider.Settings
 import android.webkit.MimeTypeMap
+import androidx.core.content.ContextCompat
 import com.flutterware.app.runtime.ApkInstallCoordinator
 import com.flutterware.app.projects.ProjectStore
 import com.flutterware.app.projects.ProjectFileStore
@@ -71,11 +72,12 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val filter = IntentFilter(ApkInstallCoordinator.ACTION_INSTALL_STATUS)
-        if (Build.VERSION.SDK_INT >= 33) {
-            registerReceiver(installReceiver, filter, RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(installReceiver, filter)
-        }
+        ContextCompat.registerReceiver(
+            this,
+            installReceiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
     }
 
     override fun onResume() {
