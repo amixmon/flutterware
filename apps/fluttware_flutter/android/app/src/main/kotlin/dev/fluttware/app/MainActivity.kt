@@ -123,6 +123,26 @@ class MainActivity : FlutterActivity() {
                         call.argument<String>("buttonText").orEmpty(),
                     )
                 }
+                "listProjectDependencies" -> runProjectOperation(result) {
+                    ProjectStore.dependencies(
+                        this,
+                        call.argument<String>("id").orEmpty(),
+                    )
+                }
+                "upsertProjectDependency" -> runProjectOperation(result) {
+                    ProjectStore.upsertDependency(
+                        this,
+                        call.argument<String>("id").orEmpty(),
+                        call.arguments as? Map<*, *> ?: emptyMap<String, Any>(),
+                    )
+                }
+                "removeProjectDependency" -> runProjectOperation(result) {
+                    ProjectStore.removeDependency(
+                        this,
+                        call.argument<String>("id").orEmpty(),
+                        call.argument<String>("name").orEmpty(),
+                    )
+                }
                 "listProjectFiles" -> runProjectOperation(result) {
                     ProjectFileStore.list(this, call.argument<String>("id").orEmpty())
                 }

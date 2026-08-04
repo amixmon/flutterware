@@ -10,15 +10,30 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.media.ExifInterface
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.charset.StandardCharsets
 
 object ProjectStore {
+    private const val CURRENT_SCHEMA_VERSION = 3
     private const val METADATA_FILE = "fluttware-project.json"
     private val idPattern = Regex("^[a-z][a-z0-9_]{2,30}$")
     private val packagePattern = Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$")
+    private val dependencyNamePattern = Regex("^[a-z][a-z0-9_]{1,63}$")
+    private val dependencyConstraintPattern = Regex("^[0-9A-Za-z.^<>=*+_ \\-]{1,100}$")
+    private val dependencyDeclarationPattern = Regex("^  ([a-z][a-z0-9_]*):(?:\\s.*)?$")
+    private val compatibilityValues = setOf(
+        "pureDart",
+        "flutter",
+        "androidPlugin",
+        "unsupported",
+        "unknown",
+    )
+    private const val MANAGED_DEPENDENCIES_START = "  # Flutterware-managed dependencies."
+    private const val MANAGED_DEPENDENCIES_END = "  # End Flutterware-managed dependencies."
 
     fun list(context: Context): List<Map<String, Any?>> {
         val root = projectsRoot(context)
@@ -50,11 +65,19 @@ object ProjectStore {
 
         val now = System.currentTimeMillis()
         val metadata = JSONObject()
-            .put("schemaVersion", 2)
+            .put("schemaVersion", CURRENT_SCHEMA_VERSION)
             .put("id", id)
             .put("name", name.trim())
             .put("packageName", packageName)
             .put("color", color)
+            .put(
+                "theme",
+                JSONObject()
+                    .put("mode", "system")
+                    .put("seedColor", color)
+                    .put("fontFamily", JSONObject.NULL),
+            )
+            .put("dependencies", JSONArray())
             .put("pinned", false)
             .put("hasButton", false)
             .put("buttonText", "Button")
@@ -156,15 +179,115 @@ object ProjectStore {
         writeMetadata(directory, metadata)
     }
 
+    fun dependencies(context: Context, id: String): List<Map<String, Any?>> {
+        val directory = projectDirectory(context, id)
+        return dependencyMaps(readMetadata(directory).optJSONArray("dependencies"))
+    }
+
+    fun upsertDependency(
+        context: Context,
+        id: String,
+        values: Map<*, *>,
+    ): List<Map<String, Any?>> {
+        val name = values["name"]?.toString()?.trim().orEmpty()
+        val constraint = values["constraint"]?.toString()?.trim().orEmpty().ifBlank { "any" }
+        val compatibility = values["compatibility"]?.toString()?.trim().orEmpty()
+            .ifBlank { "unknown" }
+        require(dependencyNamePattern.matches(name)) { "Invalid package name: $name" }
+        require(dependencyConstraintPattern.matches(constraint)) {
+            "Invalid hosted version constraint: $constraint"
+        }
+        require(compatibility in compatibilityValues) {
+            "Invalid package compatibility: $compatibility"
+        }
+        require(name != "flutter") { "The Flutter SDK dependency cannot be replaced" }
+
+        val directory = projectDirectory(context, id)
+        val metadata = readMetadata(directory)
+        val current = metadata.optJSONArray("dependencies") ?: JSONArray()
+        val nextItems = mutableListOf<JSONObject>()
+        for (index in 0 until current.length()) {
+            val dependency = current.optJSONObject(index) ?: continue
+            if (dependency.optString("name") != name) nextItems.add(dependency)
+        }
+        nextItems.add(
+            JSONObject()
+                .put("name", name)
+                .put("constraint", constraint)
+                .put("compatibility", compatibility)
+                .put("direct", true),
+        )
+        nextItems.sortBy { it.getString("name") }
+        val next = JSONArray().apply { nextItems.forEach(::put) }
+        syncPubspecDependencies(directory, next)
+        metadata
+            .put("dependencies", next)
+            .put("updatedAt", System.currentTimeMillis())
+        writeMetadata(directory, metadata)
+        return dependencyMaps(next)
+    }
+
+    fun removeDependency(context: Context, id: String, name: String): List<Map<String, Any?>> {
+        require(dependencyNamePattern.matches(name)) { "Invalid package name: $name" }
+        val directory = projectDirectory(context, id)
+        val metadata = readMetadata(directory)
+        val current = metadata.optJSONArray("dependencies") ?: JSONArray()
+        val next = JSONArray()
+        for (index in 0 until current.length()) {
+            val dependency = current.optJSONObject(index) ?: continue
+            if (dependency.optString("name") != name) next.put(dependency)
+        }
+        syncPubspecDependencies(directory, next)
+        metadata
+            .put("dependencies", next)
+            .put("updatedAt", System.currentTimeMillis())
+        writeMetadata(directory, metadata)
+        return dependencyMaps(next)
+    }
+
     private fun projectsRoot(context: Context): File =
         File(context.filesDir, "projects").apply {
             check(isDirectory || mkdirs()) { "Could not create projects directory" }
         }
 
+    private fun projectDirectory(context: Context, id: String): File {
+        require(idPattern.matches(id)) { "Invalid project identifier" }
+        val root = projectsRoot(context)
+        val directory = File(root, id)
+        requireInside(root, directory)
+        check(directory.isDirectory) { "Project does not exist: $id" }
+        return directory
+    }
+
     private fun readMetadata(directory: File): JSONObject {
         val file = File(directory, METADATA_FILE)
         check(file.isFile) { "Project metadata is missing: ${directory.name}" }
-        return JSONObject(file.readText())
+        val metadata = JSONObject(file.readText())
+        val version = metadata.optInt("schemaVersion", 1)
+        require(version <= CURRENT_SCHEMA_VERSION) {
+            "Project ${directory.name} uses unsupported schema version $version"
+        }
+        var migrated = false
+        if (!metadata.has("theme")) {
+            metadata.put(
+                "theme",
+                JSONObject()
+                    .put("mode", "system")
+                    .put("seedColor", metadata.optLong("color", 0xFF168CF3L))
+                    .put("fontFamily", JSONObject.NULL),
+            )
+            migrated = true
+        }
+        if (!metadata.has("dependencies")) {
+            metadata.put("dependencies", JSONArray())
+            migrated = true
+        }
+        if (version != CURRENT_SCHEMA_VERSION) {
+            metadata.put("schemaVersion", CURRENT_SCHEMA_VERSION)
+            migrated = true
+        }
+        if (migrated) writeMetadata(directory, metadata)
+        return metadata
     }
 
     private fun writeMetadata(directory: File, metadata: JSONObject) {
@@ -173,6 +296,73 @@ object ProjectStore {
         temporary.writeText(metadata.toString(2) + "\n")
         check(!destination.exists() || destination.delete()) { "Could not replace project metadata" }
         check(temporary.renameTo(destination)) { "Could not activate project metadata" }
+    }
+
+    private fun syncPubspecDependencies(directory: File, dependencies: JSONArray) {
+        val pubspec = File(directory, "pubspec.yaml")
+        check(pubspec.isFile) { "Project pubspec.yaml is missing" }
+        val lines = pubspec.readLines(StandardCharsets.UTF_8).toMutableList()
+        val oldStart = lines.indexOf(MANAGED_DEPENDENCIES_START)
+        val oldEnd = lines.indexOf(MANAGED_DEPENDENCIES_END)
+        check((oldStart < 0) == (oldEnd < 0) && (oldStart < 0 || oldEnd >= oldStart)) {
+            "Managed dependency markers in pubspec.yaml are invalid"
+        }
+        if (oldStart >= 0) {
+            lines.subList(oldStart, oldEnd + 1).clear()
+        }
+
+        val sectionStart = lines.indexOfFirst { it == "dependencies:" }
+        check(sectionStart >= 0) { "pubspec.yaml has no dependencies section" }
+        var sectionEnd = sectionStart + 1
+        while (sectionEnd < lines.size) {
+            val line = lines[sectionEnd]
+            if (line.isNotBlank() && !line.first().isWhitespace() && !line.startsWith("#")) break
+            sectionEnd++
+        }
+        val requestedNames = buildSet {
+            for (index in 0 until dependencies.length()) {
+                add(dependencies.getJSONObject(index).getString("name"))
+            }
+        }
+        val manualNames = lines.subList(sectionStart + 1, sectionEnd)
+            .mapNotNull { dependencyDeclarationPattern.matchEntire(it)?.groupValues?.get(1) }
+            .filterNot { it == "flutter" }
+            .toSet()
+        val conflicts = requestedNames.intersect(manualNames)
+        check(conflicts.isEmpty()) {
+            "Package is already declared manually in pubspec.yaml: ${conflicts.sorted().joinToString()}"
+        }
+
+        if (dependencies.length() > 0) {
+            val managed = mutableListOf(MANAGED_DEPENDENCIES_START)
+            for (index in 0 until dependencies.length()) {
+                val dependency = dependencies.getJSONObject(index)
+                managed.add(
+                    "  ${dependency.getString("name")}: ${dependency.getString("constraint")}",
+                )
+            }
+            managed.add(MANAGED_DEPENDENCIES_END)
+            lines.addAll(sectionEnd, managed)
+        }
+        val temporary = File(directory, ".pubspec.yaml.dependencies.tmp")
+        temporary.writeText(lines.joinToString("\n", postfix = "\n"), StandardCharsets.UTF_8)
+        check(pubspec.delete()) { "Could not replace pubspec.yaml" }
+        check(temporary.renameTo(pubspec)) { "Could not activate pubspec.yaml" }
+    }
+
+    private fun dependencyMaps(value: JSONArray?): List<Map<String, Any?>> = buildList {
+        val dependencies = value ?: JSONArray()
+        for (index in 0 until dependencies.length()) {
+            val dependency = dependencies.optJSONObject(index) ?: continue
+            add(
+                mapOf(
+                    "name" to dependency.optString("name"),
+                    "constraint" to dependency.optString("constraint", "any"),
+                    "compatibility" to dependency.optString("compatibility", "unknown"),
+                    "direct" to dependency.optBoolean("direct", true),
+                ),
+            )
+        }
     }
 
     private fun validate(id: String, name: String, packageName: String) {
@@ -287,10 +477,19 @@ object ProjectStore {
     }
 
     private fun toMap(directory: File, json: JSONObject): Map<String, Any?> = mapOf(
+        "schemaVersion" to json.optInt("schemaVersion", CURRENT_SCHEMA_VERSION),
         "id" to json.getString("id"),
         "name" to json.getString("name"),
         "packageName" to json.getString("packageName"),
         "color" to json.optLong("color", 0xFF168CF3L),
+        "theme" to json.optJSONObject("theme")?.let { theme ->
+            mapOf(
+                "mode" to theme.optString("mode", "system"),
+                "seedColor" to theme.optLong("seedColor", json.optLong("color", 0xFF168CF3L)),
+                "fontFamily" to theme.optString("fontFamily").takeIf { it.isNotBlank() },
+            )
+        },
+        "dependencies" to dependencyMaps(json.optJSONArray("dependencies")),
         "pinned" to json.optBoolean("pinned", false),
         "hasButton" to json.optBoolean("hasButton", false),
         "buttonText" to json.optString("buttonText", "Button"),

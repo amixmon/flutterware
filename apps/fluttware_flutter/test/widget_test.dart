@@ -4,9 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutterware/app/fluttware_app.dart';
 import 'package:flutterware/features/about/presentation/about_page.dart';
+import 'package:flutterware/features/packages/presentation/package_manager_page.dart';
 import 'package:flutterware/features/projects/presentation/new_project_page.dart';
 import 'package:flutterware/features/projects/domain/demo_project_template.dart';
 import 'package:flutterware/features/projects/domain/project_summary.dart';
+import 'package:flutterware/features/projects/domain/project_configuration.dart';
 import 'package:flutterware/features/editor/presentation/visual_editor.dart';
 import 'package:flutterware/features/editor/presentation/logic_editor.dart';
 import 'package:flutterware/features/editor/presentation/editor_page.dart';
@@ -18,6 +20,36 @@ import 'package:flutterware/ui/widgets/app_code_editor.dart';
 import 'package:flutterware/ui/widgets/app_text_field.dart';
 
 void main() {
+  test('project schema v3 preserves theme and package compatibility', () {
+    final project = ProjectSummary.fromMap({
+      'schemaVersion': 3,
+      'id': 'sample',
+      'name': 'Sample',
+      'packageName': 'com.example.sample',
+      'updatedAt': 0,
+      'color': 0xFF6750A4,
+      'theme': {'mode': 'dark', 'seedColor': 0xFF6750A4, 'fontFamily': 'Inter'},
+      'dependencies': [
+        {
+          'name': 'intl',
+          'constraint': '^0.20.0',
+          'compatibility': 'pureDart',
+          'direct': true,
+        },
+      ],
+    });
+
+    expect(project.schemaVersion, 3);
+    expect(project.theme.mode, ProjectThemeMode.dark);
+    expect(project.theme.seedColor, 0xFF6750A4);
+    expect(project.theme.fontFamily, 'Inter');
+    expect(project.dependencies.single.name, 'intl');
+    expect(
+      project.dependencies.single.compatibility,
+      PackageCompatibility.pureDart,
+    );
+  });
+
   test('new layouts default to start alignment in preview and generation', () {
     final column = WidgetCatalog.byType('column');
     final row = WidgetCatalog.byType('row');
@@ -682,6 +714,17 @@ void main() {
     await tester.tap(find.text('Debugger'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Debugger is added'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Project tools'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Package manager'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PackageManagerPage), findsOneWidget);
+    expect(find.text('Search pub.dev packages'), findsOneWidget);
+    expect(
+      find.text('No extra packages yet. Search above to add one.'),
+      findsOneWidget,
+    );
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, null);

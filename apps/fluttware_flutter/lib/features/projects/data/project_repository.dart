@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import '../../editor/domain/editor_models.dart';
+import '../domain/project_configuration.dart';
 import '../domain/project_file.dart';
 import '../domain/project_summary.dart';
 
@@ -67,6 +68,45 @@ class ProjectRepository {
       throw StateError('Native project update returned no data');
     }
     return ProjectSummary.fromMap(value);
+  }
+
+  Future<List<ProjectDependency>> listDependencies(String id) async {
+    final values = await _channel.invokeListMethod<Object?>(
+      'listProjectDependencies',
+      {'id': id},
+    );
+    return (values ?? const [])
+        .whereType<Map<Object?, Object?>>()
+        .map(ProjectDependency.fromMap)
+        .toList(growable: false);
+  }
+
+  Future<List<ProjectDependency>> upsertDependency({
+    required String id,
+    required ProjectDependency dependency,
+  }) async {
+    final values = await _channel.invokeListMethod<Object?>(
+      'upsertProjectDependency',
+      {'id': id, ...dependency.toMap()},
+    );
+    return (values ?? const [])
+        .whereType<Map<Object?, Object?>>()
+        .map(ProjectDependency.fromMap)
+        .toList(growable: false);
+  }
+
+  Future<List<ProjectDependency>> removeDependency({
+    required String id,
+    required String name,
+  }) async {
+    final values = await _channel.invokeListMethod<Object?>(
+      'removeProjectDependency',
+      {'id': id, 'name': name},
+    );
+    return (values ?? const [])
+        .whereType<Map<Object?, Object?>>()
+        .map(ProjectDependency.fromMap)
+        .toList(growable: false);
   }
 
   Future<List<ProjectFile>> listFiles(String id) async {

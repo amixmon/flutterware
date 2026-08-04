@@ -14,19 +14,32 @@ The next work turns that proof into a maintainable product.
 - [ ] Add integration coverage for cancellation and a complete debug build.
 - [x] Re-run the physical-device evidence suite on ARM64 Android 16.
 
-## P1 — production build modes
+## P1 — complete visual builder
+
+- [x] Version project metadata so editor, theme, and dependency migrations are safe.
+- [ ] Expand the catalog to broad Material 3 component coverage with preview,
+  properties, events, persistence, and generated-code parity.
+- [ ] Add a project Theme Studio for light, dark, and system modes, seeded color
+  schemes, typography, shapes, and component themes.
+- [ ] Add representative generated-app fixtures for forms, navigation, responsive
+  dashboards, and data-driven screens.
+
+## P2 — packages and extensibility
+
+- [x] Add Pub search, package details, version selection, and deterministic
+  dependency editing.
+- [ ] Add lockfile/cache management and offline reuse.
+- [x] Classify pure-Dart, Flutter-only, and Android-plugin packages before install.
+- [ ] Support curated visual adapters for package-provided widgets.
+- [ ] Define the Android plugin/native dependency boundary with actionable errors.
+- [ ] Add compatibility fixtures for pure-Dart and Android-native plugins.
+
+## P3 — production build modes
 
 - Add revision-matched Android ARM64 `gen_snapshot` support.
 - Produce and validate profile and release APKs.
 - Define signing-key ownership and secure credential handling.
 - Measure cold and warm build time, storage, and peak memory.
-
-## P2 — plugins and extensibility
-
-- Define the supported plugin contract and native dependency boundaries.
-- Support deterministic dependency and artifact caching.
-- Add compatibility fixtures for pure-Dart and Android-native plugins.
-- Document unsupported plugin patterns with actionable diagnostics.
 
 ## Ongoing
 
