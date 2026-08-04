@@ -16,6 +16,13 @@ fetch() {
   local downloaded="$download_root/$filename"
   local destination="$asset_root/$directory/$filename"
 
+  if [[ -f "$destination" ]] &&
+      printf '%s  %s\n' "$expected_sha256" "$destination" |
+        sha256sum --check --status; then
+    echo "Reusing verified $destination"
+    return
+  fi
+
   echo "Downloading $filename"
   curl --fail --location --retry 3 --output "$downloaded" \
     "$base_url/$filename"
