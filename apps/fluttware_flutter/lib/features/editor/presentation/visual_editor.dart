@@ -10,6 +10,7 @@ import '../../../ui/theme/app_tokens.dart';
 import '../../projects/data/project_repository.dart';
 import '../../projects/domain/project_file.dart';
 import '../../projects/domain/project_summary.dart';
+import '../../themes/domain/project_theme_builder.dart';
 import '../domain/editor_models.dart';
 import '../domain/logic_models.dart';
 
@@ -1442,7 +1443,18 @@ class _PhoneCanvas extends StatelessWidget {
   final VoidCallback onDragEnded;
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
+  Widget build(BuildContext context) => Theme(
+    data: ProjectThemeBuilder.build(
+      project.theme,
+      ProjectThemeBuilder.brightnessFor(
+        project.theme,
+        MediaQuery.platformBrightnessOf(context),
+      ),
+    ),
+    child: Builder(builder: _buildCanvas),
+  );
+
+  Widget _buildCanvas(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) => Padding(
       padding: const EdgeInsets.all(18),
       child: Center(

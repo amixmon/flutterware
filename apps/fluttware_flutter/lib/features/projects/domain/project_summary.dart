@@ -71,6 +71,8 @@ class ProjectSummary {
   }
 
   ProjectSummary copyWith({
+    Color? color,
+    ProjectThemeSettings? theme,
     Uint8List? iconBytes,
     bool? pinned,
     bool? hasButton,
@@ -82,9 +84,9 @@ class ProjectSummary {
       name: name,
       packageName: packageName,
       modifiedLabel: modifiedLabel ?? this.modifiedLabel,
-      color: color,
+      color: color ?? this.color,
       schemaVersion: schemaVersion,
-      theme: theme,
+      theme: theme ?? this.theme,
       dependencies: dependencies,
       iconBytes: iconBytes ?? this.iconBytes,
       pinned: pinned ?? this.pinned,

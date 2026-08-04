@@ -123,6 +123,13 @@ class MainActivity : FlutterActivity() {
                         call.argument<String>("buttonText").orEmpty(),
                     )
                 }
+                "updateProjectTheme" -> runProjectOperation(result) {
+                    ProjectStore.updateTheme(
+                        this,
+                        call.argument<String>("id").orEmpty(),
+                        call.arguments as? Map<*, *> ?: emptyMap<String, Any>(),
+                    )
+                }
                 "listProjectDependencies" -> runProjectOperation(result) {
                     ProjectStore.dependencies(
                         this,

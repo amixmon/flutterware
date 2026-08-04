@@ -18,7 +18,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 
 object ProjectStore {
-    private const val CURRENT_SCHEMA_VERSION = 3
+    private const val CURRENT_SCHEMA_VERSION = 4
     private const val METADATA_FILE = "fluttware-project.json"
     private val idPattern = Regex("^[a-z][a-z0-9_]{2,30}$")
     private val packagePattern = Regex("^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$")
@@ -32,6 +32,8 @@ object ProjectStore {
         "unsupported",
         "unknown",
     )
+    private val themeModes = setOf("system", "light", "dark")
+    private val fontFamilyPattern = Regex("^[A-Za-z0-9 _-]{1,60}$")
     private const val MANAGED_DEPENDENCIES_START = "  # Flutterware-managed dependencies."
     private const val MANAGED_DEPENDENCIES_END = "  # End Flutterware-managed dependencies."
 
@@ -75,7 +77,10 @@ object ProjectStore {
                 JSONObject()
                     .put("mode", "system")
                     .put("seedColor", color)
-                    .put("fontFamily", JSONObject.NULL),
+                    .put("fontFamily", JSONObject.NULL)
+                    .put("cornerRadius", 16.0)
+                    .put("cardElevation", 0.0)
+                    .put("inputFilled", true),
             )
             .put("dependencies", JSONArray())
             .put("pinned", false)
@@ -117,6 +122,51 @@ object ProjectStore {
         val metadata = readMetadata(directory)
             .put("hasButton", hasButton)
             .put("buttonText", buttonText.ifBlank { "Button" })
+            .put("updatedAt", System.currentTimeMillis())
+        FlutterProjectScaffold.regenerate(directory, metadata)
+        writeMetadata(directory, metadata)
+        return toMap(directory, metadata)
+    }
+
+    fun updateTheme(
+        context: Context,
+        id: String,
+        values: Map<*, *>,
+    ): Map<String, Any?> {
+        val mode = values["mode"]?.toString().orEmpty()
+        val seedColor = (values["seedColor"] as? Number)?.toLong()
+            ?: error("Theme seed color is missing")
+        val fontFamily = values["fontFamily"]?.toString()?.trim()?.takeIf { it.isNotEmpty() }
+        val cornerRadius = (values["cornerRadius"] as? Number)?.toDouble() ?: 16.0
+        val cardElevation = (values["cardElevation"] as? Number)?.toDouble() ?: 0.0
+        val inputFilled = values["inputFilled"] as? Boolean ?: true
+        require(mode in themeModes) { "Invalid project theme mode: $mode" }
+        require(seedColor in 0..0xFFFFFFFFL) { "Invalid theme seed color" }
+        require(fontFamily == null || fontFamilyPattern.matches(fontFamily)) {
+            "Font family must use letters, numbers, spaces, underscores, or hyphens"
+        }
+        require(cornerRadius.isFinite() && cornerRadius in 0.0..32.0) {
+            "Theme corner radius must be between 0 and 32"
+        }
+        require(cardElevation.isFinite() && cardElevation in 0.0..8.0) {
+            "Card elevation must be between 0 and 8"
+        }
+
+        val directory = projectDirectory(context, id)
+        val metadata = readMetadata(directory)
+        metadata
+            .put("schemaVersion", CURRENT_SCHEMA_VERSION)
+            .put("color", seedColor)
+            .put(
+                "theme",
+                JSONObject()
+                    .put("mode", mode)
+                    .put("seedColor", seedColor)
+                    .put("fontFamily", fontFamily ?: JSONObject.NULL)
+                    .put("cornerRadius", cornerRadius)
+                    .put("cardElevation", cardElevation)
+                    .put("inputFilled", inputFilled),
+            )
             .put("updatedAt", System.currentTimeMillis())
         FlutterProjectScaffold.regenerate(directory, metadata)
         writeMetadata(directory, metadata)
@@ -274,8 +324,24 @@ object ProjectStore {
                 JSONObject()
                     .put("mode", "system")
                     .put("seedColor", metadata.optLong("color", 0xFF168CF3L))
-                    .put("fontFamily", JSONObject.NULL),
+                    .put("fontFamily", JSONObject.NULL)
+                    .put("cornerRadius", 16.0)
+                    .put("cardElevation", 0.0)
+                    .put("inputFilled", true),
             )
+            migrated = true
+        }
+        val theme = metadata.getJSONObject("theme")
+        if (!theme.has("cornerRadius")) {
+            theme.put("cornerRadius", 16.0)
+            migrated = true
+        }
+        if (!theme.has("cardElevation")) {
+            theme.put("cardElevation", 0.0)
+            migrated = true
+        }
+        if (!theme.has("inputFilled")) {
+            theme.put("inputFilled", true)
             migrated = true
         }
         if (!metadata.has("dependencies")) {
@@ -487,6 +553,9 @@ object ProjectStore {
                 "mode" to theme.optString("mode", "system"),
                 "seedColor" to theme.optLong("seedColor", json.optLong("color", 0xFF168CF3L)),
                 "fontFamily" to theme.optString("fontFamily").takeIf { it.isNotBlank() },
+                "cornerRadius" to theme.optDouble("cornerRadius", 16.0),
+                "cardElevation" to theme.optDouble("cardElevation", 0.0),
+                "inputFilled" to theme.optBoolean("inputFilled", true),
             )
         },
         "dependencies" to dependencyMaps(json.optJSONArray("dependencies")),
